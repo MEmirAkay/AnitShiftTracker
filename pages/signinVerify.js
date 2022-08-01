@@ -59,7 +59,7 @@ export default class SignInVerify extends Component {
             });
             
 
-            this.state.navigation.navigate('transactionSheet', res);
+            this.state.navigation.replace('signinRequest', res);
         });
     }
 

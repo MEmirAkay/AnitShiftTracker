@@ -1,6 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
@@ -18,20 +25,31 @@ export default class TransactionSheet extends Component {
       location: {},
       errorMessage: "",
 
-      navigation: props.navigation,
-
       identity_number: null,
       identity_number_verify: false,
     };
   }
 
   degistirMesai = (eventChange) => {
-    var latitude = this.state.latitude;
-    var longitude = this.state.longitude;
-    axios.post(
-      `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
-    );
-    this.kontrolMesai();
+    Alert.alert("Uyarı !", "Bu işlemi yapmak istediğinizden emin misiniz?", [
+      {
+        text: "Hayır",
+      },
+      {
+        text: "Evet",
+        onPress: () => {
+          let latitude = this.state.latitude,
+            longitude = this.state.longitude;
+          axios
+            .post(
+              `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
+            )
+            .then(() => {
+              this.setState({ lastEvent: eventChange });
+            });
+        },
+      },
+    ]);
   };
 
   kontrolMesai = () => {
@@ -41,10 +59,6 @@ export default class TransactionSheet extends Component {
       })
       .then((e) => {
         if (typeof e !== "undefined") {
-          axios.defaults.headers = {
-            login_token: e.login_token,
-            api_token: e.api_token,
-          };
           axios.post("/event/last").then((res) => {
             res = res.data;
             if (res) {
@@ -52,8 +66,7 @@ export default class TransactionSheet extends Component {
             }
           });
         }
-      })
-      
+      });
   };
 
   Loading = () => {
@@ -120,7 +133,6 @@ export default class TransactionSheet extends Component {
                   style={styles.btnMesaiBitir}
                   onPress={() => {
                     this.degistirMesai(2);
-                    this.kontrolMesai();
                   }}
                 >
                   <Text
@@ -136,7 +148,6 @@ export default class TransactionSheet extends Component {
                   style={styles.btnMesaiBaşla}
                   onPress={() => {
                     this.degistirMesai(1);
-                    this.kontrolMesai();
                   }}
                 >
                   <Text
@@ -154,7 +165,7 @@ export default class TransactionSheet extends Component {
                 storage.remove({
                   key: "loginState",
                 });
-                
+                this.props.navigation.replace("signinRequest");
               }}
             >
               <Text style={styles.btnText}>Çıkış Yap</Text>
@@ -173,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    paddingTop: '20%'
+    paddingTop: "20%",
   },
   image: {
     marginBottom: 40,
@@ -197,7 +208,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     borderRadius: 25,
-    marginTop: 200,
   },
   btnText: {
     color: "#fff",
@@ -213,8 +223,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btnContainer: {
+    width: 200,
     backgroundColor: "#a6c9ff",
-    padding:20,
+    padding: 20,
     margin: 20,
     alignItems: "center",
     borderRadius: 15,
