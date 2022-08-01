@@ -12,7 +12,7 @@ export default class TransactionSheet extends Component {
 
     this.state = {
       lastEvent: "",
-      
+
       latitude: undefined,
       longitude: undefined,
       location: {},
@@ -28,14 +28,9 @@ export default class TransactionSheet extends Component {
   degistirMesai = (eventChange) => {
     var latitude = this.state.latitude;
     var longitude = this.state.longitude;
-
-    axios
-      .post(
-        `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
-      )
-      .then((res) => {
-        console.log("degistir mesai : ", res.data);
-      });
+    axios.post(
+      `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
+    );
     this.kontrolMesai();
   };
 
@@ -45,15 +40,12 @@ export default class TransactionSheet extends Component {
         key: "loginState",
       })
       .then((e) => {
-        console.log("page3 : ", e);
         if (typeof e !== "undefined") {
           axios.defaults.headers = {
             login_token: e.login_token,
             api_token: e.api_token,
           };
-
           axios.post("/event/last").then((res) => {
-            console.log("axios: ", res.data);
             res = res.data;
             if (res) {
               this.setState({ lastEvent: res });
@@ -61,9 +53,7 @@ export default class TransactionSheet extends Component {
           });
         }
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      
   };
 
   Loading = () => {
@@ -111,7 +101,7 @@ export default class TransactionSheet extends Component {
         typeof e.latitude !== "undefined"
           ? (this.setState({ latitude: JSON.stringify(e.latitude) }),
             this.setState({ longitude: JSON.stringify(e.longitude) }))
-          : console.log("undefinedd");
+          : console.log("undefined");
       })
       .catch((e) => console.log(e));
   };
@@ -130,6 +120,7 @@ export default class TransactionSheet extends Component {
                   style={styles.btnMesaiBitir}
                   onPress={() => {
                     this.degistirMesai(2);
+                    this.kontrolMesai();
                   }}
                 >
                   <Text
@@ -145,6 +136,7 @@ export default class TransactionSheet extends Component {
                   style={styles.btnMesaiBaşla}
                   onPress={() => {
                     this.degistirMesai(1);
+                    this.kontrolMesai();
                   }}
                 >
                   <Text
@@ -162,9 +154,10 @@ export default class TransactionSheet extends Component {
                 storage.remove({
                   key: "loginState",
                 });
+                
               }}
             >
-              <Text style={styles.btnText}>Temizle</Text>
+              <Text style={styles.btnText}>Çıkış Yap</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -180,7 +173,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: '20%'
   },
   image: {
     marginBottom: 40,
@@ -221,7 +214,7 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     backgroundColor: "#a6c9ff",
-
+    padding:20,
     margin: 20,
     alignItems: "center",
     borderRadius: 15,
