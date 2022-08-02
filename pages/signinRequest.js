@@ -87,7 +87,9 @@ export default class SigninRequest extends Component {
         }
 
         res.identity = this.state.identity_number;
-        this.state.navigation.navigate("signinVerify", res);
+        this.state.navigation.replace("signinVerify", res);
+      }).catch((error) => {
+        return Alert.alert("Hata",error);
       });
   }
 

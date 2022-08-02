@@ -26,7 +26,7 @@ export default class SignInVerify extends Component {
             cntrl: false,
             navigation: props.navigation,
             params: props.route.params,
-            deviceJson: Device.brand+"-"+Device.modelId+"-"+Device.deviceName,
+            deviceInfo: Device.brand+"-"+Device.modelId+"-"+Device.deviceName,
 
             identity: props.route.params.identity,
             timer: props.route.params.timeout
@@ -40,7 +40,7 @@ export default class SignInVerify extends Component {
 
         console.log("code:");
         console.log(this.state.verifyCode);
-        axios.post('/user/signin', `identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=12345`).then(res => {
+        axios.post('/user/signin', `identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`).then(res => {
             res = res.data;
             if (!res.status) {
                 this.setState({ cntrl: false });
@@ -62,7 +62,6 @@ export default class SignInVerify extends Component {
             this.state.navigation.replace('signinRequest', res);
         });
     }
-
 
     componentDidMount() {
         this.interval = setInterval(() => this.setState((prevState) => ({ timer: prevState.timer - 1 })), 1000);
@@ -116,8 +115,6 @@ export default class SignInVerify extends Component {
         return `${addZero(h)}:${addZero(m)}:${addZero(s)}`;
     }
 
-   
-
     render() {
 
         return (
@@ -159,7 +156,6 @@ export default class SignInVerify extends Component {
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {

@@ -1,18 +1,23 @@
 import { StatusBar } from "expo-status-bar";
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   Alert,
+  Dimensions,
+  Button,
+  FlatList,
+  Image,
 } from "react-native";
 import storage from "../component/storage";
 import "react-native-reanimated";
-import { MotiView } from "moti";
+import { MotiView, SafeAreaView } from "moti";
 import axios from "axios";
 import * as Location from "expo-location";
+// import MapView from "react-native-maps"; //Revize
+
 export default class TransactionSheet extends Component {
   constructor(props) {
     super(props);
@@ -24,9 +29,10 @@ export default class TransactionSheet extends Component {
       longitude: undefined,
       location: {},
       errorMessage: "",
-
+      last10data: [],
       identity_number: null,
       identity_number_verify: false,
+      username: "Kullanici",
     };
   }
 
@@ -46,11 +52,16 @@ export default class TransactionSheet extends Component {
             )
             .then(() => {
               this.setState({ lastEvent: eventChange });
+              this.son10Kayit();
             });
         },
       },
     ]);
   };
+
+  son10Kayit() {
+    axios.post("/event/list").then(e => this.setState({ last10data: e.data.list }));
+  }
 
   kontrolMesai = () => {
     storage
@@ -58,6 +69,11 @@ export default class TransactionSheet extends Component {
         key: "loginState",
       })
       .then((e) => {
+        this.setState({ username: e.name_surname });
+        axios.defaults.headers = {
+          login_token: e.login_token,
+          api_token: e.api_token,
+        };
         if (typeof e !== "undefined") {
           axios.post("/event/last").then((res) => {
             res = res.data;
@@ -65,6 +81,7 @@ export default class TransactionSheet extends Component {
               this.setState({ lastEvent: res });
             }
           });
+          this.son10Kayit();
         }
       });
   };
@@ -120,71 +137,254 @@ export default class TransactionSheet extends Component {
   };
 
   render() {
-    console.log(JSON.stringify(this.state.location.latitude));
-    return (
-      <View style={styles.container}>
-        <Image style={styles.image} source={require("../assets/logo.png")} />
-        <StatusBar style="auto" />
-        {typeof this.state.latitude !== "undefined" ? (
-          <View>
-            {this.state.lastEvent == 1 ? (
-              <View>
-                <TouchableOpacity
-                  style={styles.btnMesaiBitir}
-                  onPress={() => {
-                    this.degistirMesai(2);
-                  }}
-                >
-                  <Text
-                    style={{ color: "#fff", textAlign: "center", fontSize: 20 }}
-                  >
-                    Mesai Bitir
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View>
-                <TouchableOpacity
-                  style={styles.btnMesaiBaşla}
-                  onPress={() => {
-                    this.degistirMesai(1);
-                  }}
-                >
-                  <Text
-                    style={{ color: "#fff", textAlign: "center", fontSize: 20 }}
-                  >
-                    Mesai Başla
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            <TouchableOpacity
-              style={styles.btnContainer}
-              onPress={() => {
-                storage.remove({
-                  key: "loginState",
-                });
-                this.props.navigation.replace("signinRequest");
+    // const DATA = [
+    //   {
+    //     id: 1,
+    //     islem: "Mesai Başla",
+    //     tarih: "31.07.2022",
+    //     saat: "18:00",
+    //   },
+    //   {
+    //     id: 2,
+    //     islem: "Mesai Bitir",
+    //     tarih: "31.07.2022",
+    //     saat: "17:55",
+    //   },
+    //   {
+    //     id: 3,
+    //     islem: "Mesai Başla",
+    //     tarih: "01.08.2022",
+    //     saat: "18:01",
+    //   },
+    //   {
+    //     id: 4,
+    //     islem: "Mesai Bitir",
+    //     tarih: "01.08.2022",
+    //     saat: "18:03",
+    //   },
+    //   {
+    //     id: 5,
+    //     islem: "Mesai Başla",
+    //     tarih: "02.08.2022",
+    //     saat: "17:58",
+    //   },
+    //   {
+    //     id: 6,
+    //     islem: "Mesai Bitir",
+    //     tarih: "02.08.2022",
+    //     saat: "18:00",
+    //   },
+    //   {
+    //     id: 7,
+    //     islem: "Mesai Başla",
+    //     tarih: "01.08.2022",
+    //     saat: "18:01",
+    //   },
+    //   {
+    //     id: 8,
+    //     islem: "Mesai Bitir",
+    //     tarih: "01.08.2022",
+    //     saat: "18:03",
+    //   },
+    //   {
+    //     id: 9,
+    //     islem: "Mesai Başla",
+    //     tarih: "02.08.2022",
+    //     saat: "17:58",
+    //   },
+    //   {
+    //     id: 10,
+    //     islem: "Mesai Bitir",
+    //     tarih: "02.08.2022",
+    //     saat: "18:00",
+    //   },
+    // ];
+    const ItemView = ({ item }) => {
+      return (
+        <View style={{ width: Dimensions.get("window").width * 0.9 }}>
+          <TouchableOpacity style={{ height: 30 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                
+                alignItems:'center',
+                borderBottomWidth: 0.5,
+                borderTopWidth: 0.5,
+                alignContent: "space-between",
               }}
             >
-              <Text style={styles.btnText}>Çıkış Yap</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <this.Loading />
-        )}
-      </View>
+              {item.islem_tipi == "1" ? (
+                <Text
+                  style={{
+                    flex: 1,
+                    color: "black",
+                    fontSize: 15,
+                  }}
+                >
+                  Mesai Başla
+                </Text>
+              ) : (
+                <Text
+                  style={{
+                    flex: 1,
+                    color: "black",
+                    fontSize: 15,
+                  }}
+                >
+                  Mesai Bitir
+                </Text>
+              )}
+
+              <Text
+                style={{
+                  flex: 1,
+                  color: "black",
+                  fontSize: 12,
+                }}
+              >
+                {item.islem_tarihi}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    };
+
+    return (
+      <SafeAreaView style={styles.container}>
+        <View>
+          <StatusBar style="hidden" />
+          {typeof this.state.latitude !== "undefined" ? (
+            <View
+              style={{
+                felx: 1,
+
+                alignItems: "center",
+                alignContent: "center",
+              }}
+            >
+              <View style={{ alignItems: "center", marginTop: 60 }}>
+                <Image
+                  style={{
+                    
+                    width: Dimensions.get("window").width * 0.35,
+                    height: Dimensions.get("window").width * 0.35,
+                    borderRadius: 100,
+                  }}
+                  source={{
+                    uri: "https://img.icons8.com/ios-glyphs/240/000000/user--v1.png",
+                  }}
+                />
+
+                <Text style={{ fontSize: 30 }}>Hoş Geldiniz</Text>
+                <Text style={{ fontSize: 20 }}>{this.state.username}</Text>
+              </View>
+              <View style={{ flex: 1, flexDirection: "column", marginTop: 25 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignContent: "space-between",
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text>İşlem</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text>İşlem Tarihi</Text>
+                  </View>
+                </View>
+
+                <FlatList
+                  style={{ flex: 1, marginTop: 5 }}
+                  data={this.state.last10data}
+                  renderItem={ItemView}
+                  keyExtractor={(item) => item.id}
+                />
+              </View>
+              {this.state.lastEvent == 1 ? (
+                <View>
+                  <TouchableOpacity
+                    style={styles.btnMesaiBitir}
+                    onPress={() => {
+                      this.degistirMesai(2);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#fff",
+                        textAlign: "center",
+                        fontSize: 20,
+                      }}
+                    >
+                      Mesai Bitir
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View>
+                  <TouchableOpacity
+                    style={styles.btnMesaiBaşla}
+                    onPress={() => {
+                      this.degistirMesai(1);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#fff",
+                        textAlign: "center",
+                        fontSize: 20,
+                      }}
+                    >
+                      Mesai Başla
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              <TouchableOpacity
+                style={styles.btnContainer}
+                onPress={() => {
+                  Alert.alert(
+                    "Uyarı !",
+                    "Bu işlemi yapmak istediğinizden emin misiniz?",
+                    [
+                      {
+                        text: "Hayır",
+                      },
+                      {
+                        text: "Evet",
+                        onPress: () => {
+                          storage.remove({
+                            key: "loginState",
+                          });
+                          this.props.navigation.replace("signinRequest");
+                        },
+                      },
+                    ]
+                  );
+                }}
+              >
+                <Text style={styles.btnText}>Oturumu Sonlandır</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <this.Loading />
+          )}
+        </View>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    paddingTop: "20%",
+    justifyContent: "center",
   },
   image: {
     marginBottom: 40,
@@ -194,16 +394,20 @@ const styles = StyleSheet.create({
   btnMesaiBaşla: {
     backgroundColor: "#5cb85c",
     color: "#fff",
-    padding: 30,
+    marginTop: 20,
+    padding: 20,
     alignItems: "center",
     textAlign: "center",
     justifyContent: "center",
     borderRadius: 25,
+    width: Dimensions.get("window").width * 0.8,
   },
   btnMesaiBitir: {
+    width: Dimensions.get("window").width * 0.8,
     backgroundColor: "#d9534f",
     color: "#fff",
-    padding: 30,
+    marginTop: 20,
+    padding: 20,
     alignItems: "center",
     textAlign: "center",
     justifyContent: "center",
@@ -223,11 +427,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btnContainer: {
-    width: 200,
+    width: Dimensions.get("window").width * 0.8,
     backgroundColor: "#a6c9ff",
-    padding: 20,
+    padding: 10,
     margin: 20,
     alignItems: "center",
     borderRadius: 15,
+  },
+  map: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.4,
   },
 });
