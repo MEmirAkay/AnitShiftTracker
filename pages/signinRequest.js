@@ -10,11 +10,13 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  BackHandler,
 } from "react-native";
 import axios from "axios";
 import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
+import * as Location from "expo-location";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -26,26 +28,52 @@ export default class SigninRequest extends Component {
       navigation: props.navigation,
     };
   }
+  _getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      console.log("Permission not granted!");
+      Alert.alert(
+        "Uyarı",
+        "Konum bilgisi alınamadı lüften konum hizmetinin açık olduğundan ve uygualamanın konum bilginizi kullanmasına izin verdiğinizden emin olun !",
+        [
+          {
+            text: "Tamam",
+            onPress: () => {
+              status = Location.requestForegroundPermissionsAsync();
+            },
+          },
+        ]
+      );
+    } else {
+      try {
+        storage
+        .load({
+          key: "loginState",
+        })
+        .catch((e) => {
+          console.log(typeof e);
+        })
+        .then((e) => {
+          console.log(e);
+
+          if (typeof e !== "undefined") {
+            axios.defaults.headers = {
+              login_token: e.login_token,
+              api_token: e.api_token,
+            };
+            this.state.navigation.replace("transactionSheet");
+          }
+        });
+      } catch (error) {
+        console.log(error)
+      }
+      
+    }
+  };
 
   componentDidMount() {
-    storage
-      .load({
-        key: "loginState",
-      })
-      .catch((e) => {
-        console.log(typeof e);
-      })
-      .then((e) => {
-        console.log(e);
-
-        if (typeof e !== "undefined") {
-          axios.defaults.headers = {
-            login_token: e.login_token,
-            api_token: e.api_token,
-          };
-          this.state.navigation.replace("transactionSheet");
-        }
-      });
+    this._getLocation();
   }
   Loading = () => {
     return (
@@ -88,8 +116,13 @@ export default class SigninRequest extends Component {
 
         res.identity = this.state.identity_number;
         this.state.navigation.replace("signinVerify", res);
-      }).catch((error) => {
-        return Alert.alert("Hata",error);
+      })
+      .catch((error) => {
+        if (error) {
+          return Alert.alert("Hata", error);
+        } else {
+          return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
+        }
       });
   }
 

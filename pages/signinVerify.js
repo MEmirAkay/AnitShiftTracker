@@ -35,19 +35,13 @@ export default class SignInVerify extends Component {
     }
 
     verifyBtn() {
-        console.log("id:");
-        console.log(this.state.identity);
 
-        console.log("code:");
-        console.log(this.state.verifyCode);
         axios.post('/user/signin', `identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`).then(res => {
             res = res.data;
             if (!res.status) {
                 this.setState({ cntrl: false });
                 return Alert.alert("Uyarı", res.message);
             }
-
-            console.log(res);
             storage.save({
                 key: 'loginState',
                 data: {
@@ -57,9 +51,9 @@ export default class SignInVerify extends Component {
 
                 },
             });
-            
-
-            this.state.navigation.replace('signinRequest', res);
+            this.state.navigation.replace('transactionSheet', res);
+        }).catch(() => {
+            return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
         });
     }
 
@@ -73,7 +67,7 @@ export default class SignInVerify extends Component {
 
         clearInterval(this.interval);
         Alert.alert('Tekrar deneyiniz.', 'Onay kodunu girmek için size ayrılan süre bitti.');
-        this.state.navigation.goBack();
+        this.state.navigation.replace("signinRequest");
     }
 
     componentWillUnmount() {

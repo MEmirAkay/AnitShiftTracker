@@ -16,7 +16,6 @@ import "react-native-reanimated";
 import { MotiView, SafeAreaView } from "moti";
 import axios from "axios";
 import * as Location from "expo-location";
-// import MapView from "react-native-maps"; //Revize
 
 export default class TransactionSheet extends Component {
   constructor(props) {
@@ -24,7 +23,7 @@ export default class TransactionSheet extends Component {
 
     this.state = {
       lastEvent: "",
-
+      locationStatus: 0,
       latitude: undefined,
       longitude: undefined,
       location: {},
@@ -37,30 +36,46 @@ export default class TransactionSheet extends Component {
   }
 
   degistirMesai = (eventChange) => {
-    Alert.alert("Uyarı !", "Bu işlemi yapmak istediğinizden emin misiniz?", [
-      {
-        text: "Hayır",
-      },
-      {
-        text: "Evet",
-        onPress: () => {
-          let latitude = this.state.latitude,
-            longitude = this.state.longitude;
-          axios
-            .post(
-              `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
-            )
-            .then(() => {
-              this.setState({ lastEvent: eventChange });
-              this.son10Kayit();
-            });
+    this._getLocation();
+    if (this.state.locationStatus == 1) {
+      Alert.alert(
+        "Uyarı !",
+        "Lütfen konum verinizin açık olduğundan ve uygulamaya konum verinize izin verdiğinize emin olun.",
+        [
+          {
+            text: "Tamam",
+          },
+        ]
+      );
+    } else if (this.state.locationStatus == 0) {
+      Alert.alert("Uyarı !", "Bu işlemi yapmak istediğinizden emin misiniz?", [
+        {
+          text: "Hayır",
         },
-      },
-    ]);
+        {
+          text: "Evet",
+          onPress: () => {
+            let latitude = this.state.latitude,
+              longitude = this.state.longitude;
+            axios
+              .post(
+                `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
+              )
+              .then(() => {
+                this.setState({ lastEvent: eventChange });
+                this.son10Kayit();
+              }).catch(()=>{return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");});
+          },
+        },
+      ]);
+    }
   };
 
   son10Kayit() {
-    axios.post("/event/list").then(e => this.setState({ last10data: e.data.list }));
+    axios
+      .post("/event/list")
+      .then((e) => this.setState({ last10data: e.data.list }))
+      .catch(()=> {return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !")});
   }
 
   kontrolMesai = () => {
@@ -80,7 +95,7 @@ export default class TransactionSheet extends Component {
             if (res) {
               this.setState({ lastEvent: res });
             }
-          });
+          }).catch(()=>{return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !")});
           this.son10Kayit();
         }
       });
@@ -114,6 +129,7 @@ export default class TransactionSheet extends Component {
 
   componentDidMount() {
     this._getLocation();
+
     this.kontrolMesai();
   }
 
@@ -123,7 +139,8 @@ export default class TransactionSheet extends Component {
     if (status !== "granted") {
       console.log("Permission not granted!");
       this.setState({ errorMessage: "Permission not granted!" });
-    }
+      this.setState({ locationStatus: 1 });
+    } else {
 
     await Location.getCurrentPositionAsync()
       .then((e) => {
@@ -132,73 +149,25 @@ export default class TransactionSheet extends Component {
           ? (this.setState({ latitude: JSON.stringify(e.latitude) }),
             this.setState({ longitude: JSON.stringify(e.longitude) }))
           : console.log("undefined");
+        this.setState({ locationStatus: 0 });
       })
-      .catch((e) => console.log(e));
-  };
+      .catch((e) => {console.log(e),
+        Alert.alert(
+          "Uyarı !",
+          "Lütfen konum verinizin açık olduğundan ve uygulamaya konum verinize izin verdiğinize emin olun.",
+          [
+            {
+              text: "Tamam",
+            },
+          ]
+        ),
+        this._getLocation();
+      
+      });
+  }}
 
   render() {
-    // const DATA = [
-    //   {
-    //     id: 1,
-    //     islem: "Mesai Başla",
-    //     tarih: "31.07.2022",
-    //     saat: "18:00",
-    //   },
-    //   {
-    //     id: 2,
-    //     islem: "Mesai Bitir",
-    //     tarih: "31.07.2022",
-    //     saat: "17:55",
-    //   },
-    //   {
-    //     id: 3,
-    //     islem: "Mesai Başla",
-    //     tarih: "01.08.2022",
-    //     saat: "18:01",
-    //   },
-    //   {
-    //     id: 4,
-    //     islem: "Mesai Bitir",
-    //     tarih: "01.08.2022",
-    //     saat: "18:03",
-    //   },
-    //   {
-    //     id: 5,
-    //     islem: "Mesai Başla",
-    //     tarih: "02.08.2022",
-    //     saat: "17:58",
-    //   },
-    //   {
-    //     id: 6,
-    //     islem: "Mesai Bitir",
-    //     tarih: "02.08.2022",
-    //     saat: "18:00",
-    //   },
-    //   {
-    //     id: 7,
-    //     islem: "Mesai Başla",
-    //     tarih: "01.08.2022",
-    //     saat: "18:01",
-    //   },
-    //   {
-    //     id: 8,
-    //     islem: "Mesai Bitir",
-    //     tarih: "01.08.2022",
-    //     saat: "18:03",
-    //   },
-    //   {
-    //     id: 9,
-    //     islem: "Mesai Başla",
-    //     tarih: "02.08.2022",
-    //     saat: "17:58",
-    //   },
-    //   {
-    //     id: 10,
-    //     islem: "Mesai Bitir",
-    //     tarih: "02.08.2022",
-    //     saat: "18:00",
-    //   },
-    // ];
+    
     const ItemView = ({ item }) => {
       return (
         <View style={{ width: Dimensions.get("window").width * 0.9 }}>
@@ -207,8 +176,8 @@ export default class TransactionSheet extends Component {
               style={{
                 flex: 1,
                 flexDirection: "row",
-                
-                alignItems:'center',
+
+                alignItems: "center",
                 borderBottomWidth: 0.5,
                 borderTopWidth: 0.5,
                 alignContent: "space-between",
@@ -267,7 +236,6 @@ export default class TransactionSheet extends Component {
               <View style={{ alignItems: "center", marginTop: 60 }}>
                 <Image
                   style={{
-                    
                     width: Dimensions.get("window").width * 0.35,
                     height: Dimensions.get("window").width * 0.35,
                     borderRadius: 100,
@@ -367,6 +335,7 @@ export default class TransactionSheet extends Component {
               >
                 <Text style={styles.btnText}>Oturumu Sonlandır</Text>
               </TouchableOpacity>
+              
             </View>
           ) : (
             <this.Loading />
