@@ -48,27 +48,26 @@ export default class SigninRequest extends Component {
     } else {
       try {
         storage
-        .load({
-          key: "loginState",
-        })
-        .catch((e) => {
-          console.log(typeof e);
-        })
-        .then((e) => {
-          console.log(e);
+          .load({
+            key: "loginState",
+          })
+          .catch((e) => {
+            console.log(typeof e);
+          })
+          .then((e) => {
+            console.log(e);
 
-          if (typeof e !== "undefined") {
-            axios.defaults.headers = {
-              login_token: e.login_token,
-              api_token: e.api_token,
-            };
-            this.state.navigation.replace("transactionSheet");
-          }
-        });
+            if (typeof e !== "undefined") {
+              axios.defaults.headers = {
+                login_token: e.login_token,
+                api_token: e.api_token,
+              };
+              this.state.navigation.replace("transactionSheet");
+            }
+          });
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-      
     }
   };
 
@@ -134,7 +133,7 @@ export default class SigninRequest extends Component {
           onPress={Keyboard.dismiss}
           accessible={false}
         >
-          <Image style={styles.image} source={require("../assets/logo.png")} />
+          <Image style={{resizeMode:"contain" , width:120,height:120}}  source={require("../assets/u-crm.png")} />
           <StatusBar style="hidden" />
           <Text style={styles.login}>Cihaz Eşitle</Text>
           <Text style={styles.text}>
@@ -179,10 +178,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  image: {
-    width: 200,
-    height: 110,
-  },
+ 
   TextInput: {
     backgroundColor: "#ffffff",
     width: "90%",

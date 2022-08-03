@@ -40,7 +40,7 @@ export default class TransactionSheet extends Component {
     if (this.state.locationStatus == 1) {
       Alert.alert(
         "Uyarı !",
-        "Lütfen konum verinizin açık olduğundan ve uygulamaya konum verinize izin verdiğinize emin olun.",
+        "Lütfen konum verinizin açık olduğundan ve uygulamanın konum verinize erişimine izin verdiğinizden emin olun.",
         [
           {
             text: "Tamam",
@@ -64,7 +64,13 @@ export default class TransactionSheet extends Component {
               .then(() => {
                 this.setState({ lastEvent: eventChange });
                 this.son10Kayit();
-              }).catch(()=>{return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");});
+              })
+              .catch(() => {
+                return Alert.alert(
+                  "Uyarı !",
+                  "İnternet bağlantınızı kontrol edin !"
+                );
+              });
           },
         },
       ]);
@@ -75,7 +81,9 @@ export default class TransactionSheet extends Component {
     axios
       .post("/event/list")
       .then((e) => this.setState({ last10data: e.data.list }))
-      .catch(()=> {return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !")});
+      .catch(() => {
+        return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
+      });
   }
 
   kontrolMesai = () => {
@@ -90,12 +98,20 @@ export default class TransactionSheet extends Component {
           api_token: e.api_token,
         };
         if (typeof e !== "undefined") {
-          axios.post("/event/last").then((res) => {
-            res = res.data;
-            if (res) {
-              this.setState({ lastEvent: res });
-            }
-          }).catch(()=>{return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !")});
+          axios
+            .post("/event/last")
+            .then((res) => {
+              res = res.data;
+              if (res) {
+                this.setState({ lastEvent: res });
+              }
+            })
+            .catch(() => {
+              return Alert.alert(
+                "Uyarı !",
+                "İnternet bağlantınızı kontrol edin !"
+              );
+            });
           this.son10Kayit();
         }
       });
@@ -141,33 +157,32 @@ export default class TransactionSheet extends Component {
       this.setState({ errorMessage: "Permission not granted!" });
       this.setState({ locationStatus: 1 });
     } else {
-
-    await Location.getCurrentPositionAsync()
-      .then((e) => {
-        e = e.coords;
-        typeof e.latitude !== "undefined"
-          ? (this.setState({ latitude: JSON.stringify(e.latitude) }),
-            this.setState({ longitude: JSON.stringify(e.longitude) }))
-          : console.log("undefined");
-        this.setState({ locationStatus: 0 });
-      })
-      .catch((e) => {console.log(e),
-        Alert.alert(
-          "Uyarı !",
-          "Lütfen konum verinizin açık olduğundan ve uygulamaya konum verinize izin verdiğinize emin olun.",
-          [
-            {
-              text: "Tamam",
-            },
-          ]
-        ),
-        this._getLocation();
-      
-      });
-  }}
+      await Location.getCurrentPositionAsync()
+        .then((e) => {
+          e = e.coords;
+          typeof e.latitude !== "undefined"
+            ? (this.setState({ latitude: JSON.stringify(e.latitude) }),
+              this.setState({ longitude: JSON.stringify(e.longitude) }))
+            : console.log("undefined");
+          this.setState({ locationStatus: 0 });
+        })
+        .catch((e) => {
+          console.log(e),
+            Alert.alert(
+              "Uyarı !",
+              "Lütfen konum verinizin açık olduğundan ve uygulamaya konum verinize izin verdiğinize emin olun.",
+              [
+                {
+                  text: "Tamam",
+                },
+              ]
+            ),
+            this._getLocation();
+        });
+    }
+  };
 
   render() {
-    
     const ItemView = ({ item }) => {
       return (
         <View style={{ width: Dimensions.get("window").width * 0.9 }}>
@@ -235,41 +250,14 @@ export default class TransactionSheet extends Component {
             >
               <View style={{ alignItems: "center", marginTop: 60 }}>
                 <Image
-                  style={{
-                    width: Dimensions.get("window").width * 0.35,
-                    height: Dimensions.get("window").width * 0.35,
-                    borderRadius: 100,
-                  }}
-                  source={{
-                    uri: "https://img.icons8.com/ios-glyphs/240/000000/user--v1.png",
-                  }}
+                  style={{resizeMode:"contain" , width:120,height:120}}
+                  source={require("../assets/u-crm.png")}
                 />
 
-                <Text style={{ fontSize: 30 }}>Hoş Geldiniz</Text>
-                <Text style={{ fontSize: 20 }}>{this.state.username}</Text>
+              
+                <Text style={{ fontSize: 20, paddingTop:20 }}>{this.state.username}</Text>
               </View>
-              <View style={{ flex: 1, flexDirection: "column", marginTop: 25 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignContent: "space-between",
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text>İşlem</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text>İşlem Tarihi</Text>
-                  </View>
-                </View>
 
-                <FlatList
-                  style={{ flex: 1, marginTop: 5 }}
-                  data={this.state.last10data}
-                  renderItem={ItemView}
-                  keyExtractor={(item) => item.id}
-                />
-              </View>
               {this.state.lastEvent == 1 ? (
                 <View>
                   <TouchableOpacity
@@ -310,6 +298,29 @@ export default class TransactionSheet extends Component {
                 </View>
               )}
 
+              <View style={{ flex: 1, flexDirection: "column", marginTop: 25 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignContent: "space-between",
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text>İşlem</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text>İşlem Tarihi</Text>
+                  </View>
+                </View>
+
+                <FlatList
+                  style={{ flex: 1, marginTop: 5 }}
+                  data={this.state.last10data}
+                  renderItem={ItemView}
+                  keyExtractor={(item) => item.id}
+                />
+              </View>
+
               <TouchableOpacity
                 style={styles.btnContainer}
                 onPress={() => {
@@ -335,7 +346,6 @@ export default class TransactionSheet extends Component {
               >
                 <Text style={styles.btnText}>Oturumu Sonlandır</Text>
               </TouchableOpacity>
-              
             </View>
           ) : (
             <this.Loading />
