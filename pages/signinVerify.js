@@ -43,6 +43,9 @@ export default class SignInVerify extends Component {
         res = res.data;
         if (!res.status) {
           this.setState({ cntrl: false });
+          if (res.status == 0){
+            return Alert.alert("Uyarı", res.message),this.state.navigation.replace("signinRequest");
+          }
           return Alert.alert("Uyarı", res.message);
         }
         storage.save({
