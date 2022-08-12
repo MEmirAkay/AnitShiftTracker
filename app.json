@@ -19,7 +19,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emirakay.AnitShiftTracker"
+      "bundleIdentifier": "com.emirakay.AnitShiftTracker",
+      "buildNumber":"2"
     },
     "android": {
       "adaptiveIcon": {

@@ -10,12 +10,7 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {},
-    "ios":{
-      "buildNumber":"2"
-    }
-
-
+    "production": {}
   },
   "submit": {
     "production": {
