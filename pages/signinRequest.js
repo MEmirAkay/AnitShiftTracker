@@ -10,13 +10,15 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
-  BackHandler,
+  
 } from "react-native";
 import axios from "axios";
 import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Location from "expo-location";
+
+import * as Device from "expo-device";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -26,6 +28,7 @@ export default class SigninRequest extends Component {
       identity_number: "",
       cntrl: false,
       navigation: props.navigation,
+      deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
     };
   }
   _getLocation = async () => {
@@ -53,6 +56,7 @@ export default class SigninRequest extends Component {
           })
           .catch((e) => {
             console.log(typeof e);
+            
           })
           .then((e) => {
             console.log(e);
@@ -62,7 +66,15 @@ export default class SigninRequest extends Component {
                 login_token: e.login_token,
                 api_token: e.api_token,
               };
-              this.state.navigation.replace("transactionSheet");
+
+              axios.post(`/user?device=${this.state.deviceInfo}`).then((e) => {
+              
+                if(e.data.status == 1){
+                  
+                  this.state.navigation.replace("transactionSheet");
+                }
+              }).catch(()=>Alert.alert("Lütfen Tekrar Giriş Yapınız"))
+
             }
           });
       } catch (error) {
@@ -72,6 +84,7 @@ export default class SigninRequest extends Component {
   };
 
   componentDidMount() {
+    console.log(this.state.deviceInfo)
     this._getLocation();
   }
   Loading = () => {
@@ -104,7 +117,7 @@ export default class SigninRequest extends Component {
     axios
       .post(
         "/user/signin-request",
-        `identity_number=${this.state.identity_number}`
+        `unique_code=${this.state.identity_number}`
       )
       .then((res) => {
         res = res.data;
@@ -137,26 +150,26 @@ export default class SigninRequest extends Component {
           <StatusBar style="hidden" />
           <Text style={styles.login}>Cihaz Eşitle</Text>
           <Text style={styles.text}>
-            Cihaz eşitlemek için ilk önce T.C. Kimlik numaranızı giriniz
+            Cihaz eşitlemek için ilk önce Personel Numaranızı giriniz
             ardından size verilecek kod ile giriş yapabilirsiniz.
           </Text>
           <TextInput
             style={styles.TextInput}
-            maxLength={11}
+            maxLength={5}
             keyboardType="number-pad"
-            placeholder="TC Kimlik Numaranızı Giriniz"
+            placeholder="Personel Numaranızı Giriniz"
             placeholderTextColor="#aaaaaa"
             editable={!this.state.cntrl}
             onChangeText={(e) => this.setState({ identity_number: e })}
           />
           {this.state.cntrl &&
-          this.state.identity_number.length === 11 &&
+         
           typeof this.state.location == "undefined" ? (
             <this.Loading />
           ) : (
             <TouchableOpacity
               style={styles.btnContainer}
-              disabled={this.state.identity_number.length === 11 ? false : true}
+              
               onPress={() => {
                 this.setState({ cntrl: true });
                 this.verifyBtn();
