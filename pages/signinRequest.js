@@ -59,7 +59,7 @@ export default class SigninRequest extends Component {
             
           })
           .then((e) => {
-            console.log(e);
+            
 
             if (typeof e !== "undefined") {
               axios.defaults.headers = {
