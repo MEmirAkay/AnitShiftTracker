@@ -2,7 +2,7 @@
   "expo": {
     "name": "AnitShiftTracker",
     "slug": "AnitShiftTracker",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/u-crm-icon.png",
     "userInterfaceStyle": "automatic",
@@ -20,7 +20,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.emirakay.AnitShiftTracker",
-      "buildNumber":"2"
+      "buildNumber":"3",
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service"
+      }
     },
     "android": {
       "adaptiveIcon": {
