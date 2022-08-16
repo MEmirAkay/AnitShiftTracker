@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AnitShiftTracker",
-    "slug": "AnitShiftTracker",
+    "name": "uCRM PDKS",
+    "slug": "ucrm-pdks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/u-crm-icon.png",
@@ -19,12 +19,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emirakay.AnitShiftTracker",
-      "buildNumber":"3",
+      "bundleIdentifier": "com.emirakay.uCRMPDKS",
+      "buildNumber":"4",
       "infoPlist": {
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service"
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
+        "NSLocationAlwaysUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
+        "NSLocationWhenInUseUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır"
       }
     },
     "android": {
@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/u-crm-adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.emirakay.AnitShiftTracker"
+      "package": "com.emirakay.uCRMPDKS"
     },
     "web": {
       "favicon": "./assets/u-crm-favicon.png"
