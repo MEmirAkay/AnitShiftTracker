@@ -28,11 +28,12 @@
       }
     },
     "android": {
+      "versionCode":2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/u-crm-adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.emirakay.uCRMPDKS"
+      "package": "com.emirakay.AnitShiftTracker"
     },
     "web": {
       "favicon": "./assets/u-crm-favicon.png"
