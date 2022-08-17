@@ -35,7 +35,7 @@ export default class SigninRequest extends Component {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== "granted") {
-      console.log("Permission not granted!");
+      
       Alert.alert(
         "Uyarı",
         "Konum bilgisi alınamadı lüften konum hizmetinin açık olduğundan ve uygualamanın konum bilginizi kullanmasına izin verdiğinizden emin olun !",
@@ -84,7 +84,7 @@ export default class SigninRequest extends Component {
   };
 
   componentDidMount() {
-    console.log(this.state.deviceInfo)
+    
     this._getLocation();
   }
   Loading = () => {
