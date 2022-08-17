@@ -243,7 +243,6 @@ export default class TransactionSheet extends Component {
             <View
               style={{
                 felx: 1,
-
                 alignItems: "center",
                 alignContent: "center",
               }}
@@ -281,9 +280,7 @@ export default class TransactionSheet extends Component {
                 <View>
                   <TouchableOpacity
                     style={styles.btnMesaiBaşla}
-                    onPress={() => {
-                      this.degistirMesai(1);
-                    }}
+                    onPress={() => this.degistirMesai(1)}
                   >
                     <Text
                       style={{
