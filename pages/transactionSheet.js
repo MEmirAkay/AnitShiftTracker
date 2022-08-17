@@ -261,9 +261,7 @@ export default class TransactionSheet extends Component {
                 <View>
                   <TouchableOpacity
                     style={styles.btnMesaiBitir}
-                    onPress={() => {
-                      this.degistirMesai(2);
-                    }}
+                    onPress={() => this.degistirMesai(2)}
                   >
                     <Text
                       style={{
