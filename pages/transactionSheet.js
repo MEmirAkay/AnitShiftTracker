@@ -263,7 +263,7 @@ export default class TransactionSheet extends Component {
                   <TouchableOpacity
                     style={styles.btnMesaiBitir}
                     onPress={() => {
-                      this._getLocation();
+                      
                       if (this.state.locationStatus == 1) {
                         Alert.alert(
                           "Uyarı !",
@@ -324,7 +324,7 @@ export default class TransactionSheet extends Component {
                   <TouchableOpacity
                     style={styles.btnMesaiBaşla}
                     onPress={() => {
-                      this._getLocation();
+                      
                       if (this.state.locationStatus == 1) {
                         Alert.alert(
                           "Uyarı !",
