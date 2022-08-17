@@ -35,48 +35,6 @@ export default class TransactionSheet extends Component {
     };
   }
 
-  degistirMesai = (eventChange) => {
-    // this._getLocation();
-    // if (this.state.locationStatus == 1) {
-    //   Alert.alert(
-    //     "Uyarı !",
-    //     "Lütfen konum verinizin açık olduğundan ve uygulamanın konum verinize erişimine izin verdiğinizden emin olun.",
-    //     [
-    //       {
-    //         text: "Tamam",
-    //       },
-    //     ]
-    //   );
-    // } else if (this.state.locationStatus == 0) {
-    //   Alert.alert("Uyarı !", "Bu işlemi yapmak istediğinizden emin misiniz?", [
-    //     {
-    //       text: "Hayır",
-    //     },
-    //     {
-    //       text: "Evet",
-    //       onPress: () => {
-    //         let latitude = this.state.latitude,
-    //           longitude = this.state.longitude;
-    //         axios
-    //           .post(
-    //             `/event?event_type=${eventChange}&latitude=${latitude}&longitude=${longitude}`
-    //           )
-    //           .then(() => {
-    //             this.setState({ lastEvent: eventChange });
-    //             this.son10Kayit();
-    //           })
-    //           .catch(() => {
-    //             return Alert.alert(
-    //               "Uyarı !",
-    //               "İnternet bağlantınızı kontrol edin !"
-    //             );
-    //           });
-    //       },
-    //     },
-    //   ]);
-    // }
-  };
-
   son10Kayit() {
     axios
       .post("/event/list")
