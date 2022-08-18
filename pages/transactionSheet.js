@@ -124,7 +124,7 @@ export default class TransactionSheet extends Component {
             onPress: () => {
               this.setState({ locationStatus: 0 });
               this._getLocation();
-              // this.props.navigation.replace("transactionSheet");
+              
             },
           },
         ]
