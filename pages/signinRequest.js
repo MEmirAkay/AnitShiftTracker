@@ -10,13 +10,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
-  
 } from "react-native";
 import axios from "axios";
-import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
-import * as Location from "expo-location";
 
 import * as Device from "expo-device";
 
@@ -31,62 +28,26 @@ export default class SigninRequest extends Component {
       deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
     };
   }
-  _getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+  // _getLocation = async () => {
+  // let { status } = await Location.requestForegroundPermissionsAsync();
+  // if (status !== "granted") {
+  //   this.setState({ locationStatus: 0 });
+  //   Alert.alert(
+  //     "Uyarı",
+  //     "Konum bilgisi alınamadı.\nLüften konum hizmetini açın ve uygulamaya konumunuzu kullanması için izin verin !",
+  //     [
+  //       {
+  //         text: "Tamam",
+  //         onPress: () => {
+  //           status = Location.requestForegroundPermissionsAsync();
+  //         },
+  //       },
+  //     ]
+  //   );
+  // } else {
+  // }
+  // };
 
-    if (status !== "granted") {
-      
-      Alert.alert(
-        "Uyarı",
-        "Konum bilgisi alınamadı lüften konum hizmetinin açık olduğundan ve uygualamanın konum bilginizi kullanmasına izin verdiğinizden emin olun !",
-        [
-          {
-            text: "Tamam",
-            onPress: () => {
-              status = Location.requestForegroundPermissionsAsync();
-            },
-          },
-        ]
-      );
-    } else {
-      try {
-        storage
-          .load({
-            key: "loginState",
-          })
-          .catch((e) => {
-            console.log(typeof e);
-            
-          })
-          .then((e) => {
-            
-
-            if (typeof e !== "undefined") {
-              axios.defaults.headers = {
-                login_token: e.login_token,
-                api_token: e.api_token,
-              };
-
-              axios.post(`/user?device=${this.state.deviceInfo}`).then((e) => {
-              
-                if(e.data.status == 1){
-                  
-                  this.state.navigation.replace("transactionSheet");
-                }
-              }).catch(()=>Alert.alert("Lütfen Tekrar Giriş Yapınız"))
-
-            }
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  componentDidMount() {
-    
-    this._getLocation();
-  }
   Loading = () => {
     return (
       <View style={{ textAlign: "center", alignItems: "center" }}>
@@ -115,10 +76,7 @@ export default class SigninRequest extends Component {
 
   verifyBtn() {
     axios
-      .post(
-        "/user/signin-request",
-        `unique_code=${this.state.identity_number}`
-      )
+      .post(`/user/signin-request?unique_code=${this.state.identity_number}`, null)
       .then((res) => {
         res = res.data;
         if (!res.status) {
@@ -130,11 +88,8 @@ export default class SigninRequest extends Component {
         this.state.navigation.replace("signinVerify", res);
       })
       .catch((error) => {
-        if (error) {
-          return Alert.alert("Hata", error);
-        } else {
-          return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
-        }
+        console.log(error);
+        return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
       });
   }
 
@@ -146,12 +101,15 @@ export default class SigninRequest extends Component {
           onPress={Keyboard.dismiss}
           accessible={false}
         >
-          <Image style={{resizeMode:"contain" , width:120,height:120}}  source={require("../assets/u-crm.png")} />
+          <Image
+            style={{ resizeMode: "contain", width: 120, height: 120 }}
+            source={require("../assets/u-crm.png")}
+          />
           <StatusBar style="hidden" />
           <Text style={styles.login}>Cihaz Eşitle</Text>
           <Text style={styles.text}>
-            Cihaz eşitlemek için ilk önce Personel Numaranızı giriniz
-            ardından size verilecek kod ile giriş yapabilirsiniz.
+            Cihaz eşitlemek için ilk önce Personel Numaranızı giriniz ardından
+            size verilecek kod ile giriş yapabilirsiniz.
           </Text>
           <TextInput
             style={styles.TextInput}
@@ -162,14 +120,12 @@ export default class SigninRequest extends Component {
             editable={!this.state.cntrl}
             onChangeText={(e) => this.setState({ identity_number: e })}
           />
-          {this.state.cntrl &&
-         
-          typeof this.state.location == "undefined" ? (
+          {this.state.cntrl ? (
             <this.Loading />
           ) : (
             <TouchableOpacity
+              disabled={this.state.identity_number < 5 ? true : false}
               style={styles.btnContainer}
-              
               onPress={() => {
                 this.setState({ cntrl: true });
                 this.verifyBtn();
@@ -191,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
- 
+
   TextInput: {
     backgroundColor: "#ffffff",
     width: "90%",

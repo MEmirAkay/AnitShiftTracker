@@ -27,24 +27,48 @@ export default class SignInVerify extends Component {
       navigation: props.navigation,
       params: props.route.params,
       deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
-
       identity: props.route.params.identity,
       timer: props.route.params.timeout,
     };
   }
 
+  // _getLocation = async () => {
+  //   let { status } = await Location.requestForegroundPermissionsAsync();
+
+  //   if (status !== "granted") {
+  //     this.setState({ locationStatus: 0 });
+  //     Alert.alert(
+  //       "Uyarı",
+  //       "Konum bilgisi alınamadı.\nLüften konum hizmetini açın ve uygulamaya konumunuzu kullanması için izin verin !",
+  //       [
+  //         {
+  //           text: "Tamam",
+  //           onPress: () => {
+  //             status = Location.requestForegroundPermissionsAsync();
+  //           },
+  //         },
+  //       ]
+  //     );
+  //   } else {
+
+  //   }
+  // };
+
   verifyBtn() {
     axios
       .post(
-        "/user/signin",
-        `identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`
+        `/user/signin?identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`,
+        null
       )
       .then((res) => {
         res = res.data;
         if (!res.status) {
           this.setState({ cntrl: false });
-          if (res.status == 0){
-            return Alert.alert("Uyarı", res.message),this.state.navigation.replace("signinRequest");
+          if (res.status == 0) {
+            return (
+              Alert.alert("Uyarı", res.message),
+              this.state.navigation.replace("signinRequest")
+            );
           }
           return Alert.alert("Uyarı", res.message);
         }
@@ -124,7 +148,10 @@ export default class SignInVerify extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-          <Image style={{resizeMode:"contain" , width:120,height:120}} source={require("../assets/u-crm.png")} />
+          <Image
+            style={{ resizeMode: "contain", width: 120, height: 120 }}
+            source={require("../assets/u-crm.png")}
+          />
           <StatusBar style="auto" />
           <Text style={styles.login}>Giriş Yap</Text>
           <Text style={styles.text}>
@@ -174,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 180,
   },
-  
+
   TextInput: {
     backgroundColor: "#ffffff",
     width: "55%",
