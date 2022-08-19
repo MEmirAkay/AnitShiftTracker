@@ -16,6 +16,8 @@ import "react-native-reanimated";
 import { MotiView } from "moti";
 
 import * as Device from "expo-device";
+import * as Network from "expo-network";
+
 import storage from "../component/storage";
 
 export default class SigninRequest extends Component {
@@ -37,8 +39,8 @@ export default class SigninRequest extends Component {
           key: "loginState",
         })
         .catch((e) => {
-          if (typeof e == "undefined"){
-            return
+          if (typeof e == "undefined") {
+            return;
           }
         })
         .then((e) => {
@@ -51,7 +53,7 @@ export default class SigninRequest extends Component {
           }
         });
     } catch (error) {
-      return
+      return;
     }
   }
 
@@ -137,8 +139,21 @@ export default class SigninRequest extends Component {
               disabled={this.state.identity_number < 5 ? true : false}
               style={styles.btnContainer}
               onPress={() => {
-                this.setState({ cntrl: true });
-                this.verifyBtn();
+                Network.getNetworkStateAsync()
+                  .then((e) => {
+                    if (e.isConnected === true) {
+                      this.setState({ cntrl: true });
+                      this.verifyBtn();
+                    } else {
+                      Alert.alert(
+                        "Bağlantı Hatası",
+                        "İnternet bağlantınızı kontrol edin"
+                      );
+                    }
+                  })
+                  .catch(() => {
+                    return Alert.alert("Bağlantı Hatası");
+                  });
               }}
             >
               <Text style={styles.btnText}>Kod Al</Text>

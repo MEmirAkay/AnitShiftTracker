@@ -16,6 +16,7 @@ import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Device from "expo-device";
+import * as Network from 'expo-network';
 
 export default class SignInVerify extends Component {
   constructor(props) {
@@ -31,29 +32,6 @@ export default class SignInVerify extends Component {
       timer: props.route.params.timeout,
     };
   }
-
-  // _getLocation = async () => {
-  //   let { status } = await Location.requestForegroundPermissionsAsync();
-
-  //   if (status !== "granted") {
-  //     this.setState({ locationStatus: 0 });
-  //     Alert.alert(
-  //       "Uyarı",
-  //       "Konum bilgisi alınamadı.\nLüften konum hizmetini açın ve uygulamaya konumunuzu kullanması için izin verin !",
-  //       [
-  //         {
-  //           text: "Tamam",
-  //           onPress: () => {
-  //             status = Location.requestForegroundPermissionsAsync();
-  //           },
-  //         },
-  //       ]
-  //     );
-  //   } else {
-
-  //   }
-  // };
-
   verifyBtn() {
     axios
       .post(
@@ -180,8 +158,16 @@ export default class SignInVerify extends Component {
               style={styles.btnContainer}
               disabled={this.state.verifyCode.length === 8 ? false : true}
               onPress={() => {
+                Network.getNetworkStateAsync()
+                .then((e) => {
+                  if(e.isConnected === true ){
                 this.setState({ cntrl: true });
-                this.verifyBtn();
+                this.verifyBtn();}else{
+                  Alert.alert("Bağlantı Hatası","İnternet bağlantınızı kontrol edin")
+                }
+                }).catch(()=>{
+                  return Alert.alert("Bağlantı Hatası")
+                })
               }}
             >
               <Text style={styles.btnText}>Giriş Yap</Text>

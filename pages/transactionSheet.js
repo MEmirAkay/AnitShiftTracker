@@ -234,58 +234,66 @@ export default class TransactionSheet extends Component {
                     style={styles.btnMesaiBitir}
                     onPress={() => {
                       Network.getNetworkStateAsync()
-                        .then(() => {
-                          Alert.alert(
-                            "Uyarı !",
-                            "Bu işlemi yapmak istediğinizden emin misiniz?",
-                            [
-                              {
-                                text: "Evet",
-                                onPress: () => {
-                                  this.setState({ loadingStatus: 1 });
-                                  this._getLocation()
-                                    .then(() => {
-                                      let latitude = this.state.latitude;
-                                      let longitude = this.state.longitude;
-                                      if (this.state.locationStatus == 1) {
-                                        axios
-                                          .post(
-                                            `/event?event_type=${2}&latitude=${latitude}&longitude=${longitude}`
-                                          )
-                                          .then(() => {
-                                            this.setState({ lastEvent: 2 });
-                                            this.son10Kayit();
-                                            this.setState({ loadingStatus: 0 });
-                                          })
-                                          .catch(() => {
-                                            return Alert.alert(
-                                              "Uyarı !",
-                                              "İnternet bağlantınızı kontrol edin !",
-                                              this.setState({
-                                                loadingStatus: 0,
-                                              })
-                                            );
-                                          });
-                                      }
-                                    })
-                                    .catch(() => {
-                                      Alert.alert(
-                                        "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
-                                      );
-                                      this.setState({ loadingStatus: 0 });
-                                    });
+                        .then((e) => {
+                          if(e.isConnected === true){
+                            Alert.alert(
+                              "Uyarı !",
+                              "Bu işlemi yapmak istediğinizden emin misiniz?",
+                              [
+                                {
+                                  text: "Evet",
+                                  onPress: () => {
+                                    this.setState({ loadingStatus: 1 });
+                                    this._getLocation()
+                                      .then(() => {
+                                        let latitude = this.state.latitude;
+                                        let longitude = this.state.longitude;
+                                        if (this.state.locationStatus == 1) {
+                                          axios
+                                            .post(
+                                              `/event?event_type=${2}&latitude=${latitude}&longitude=${longitude}`
+                                            )
+                                            .then(() => {
+                                              this.setState({ lastEvent: 2 });
+                                              this.son10Kayit();
+                                              this.setState({ loadingStatus: 0 });
+                                            })
+                                            .catch(() => {
+                                              return Alert.alert(
+                                                "Uyarı !",
+                                                "İnternet bağlantınızı kontrol edin !",
+                                                this.setState({
+                                                  loadingStatus: 0,
+                                                })
+                                              );
+                                            });
+                                        }
+                                      })
+                                      .catch(() => {
+                                        Alert.alert(
+                                          "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
+                                        );
+                                        this.setState({ loadingStatus: 0 });
+                                      });
+                                  },
                                 },
-                              },
-                              {
-                                text: "Hayır",
-                              },
-                            ]
-                          );
-                        })
-                        .catch(() => {
-                          Alert.alert("Bağlantı hatası",
+                                {
+                                  text: "Hayır",
+                                },
+                              ]
+                            );
+                          }else{
+                            this.setState({ loadingStatus: 0 });
+                            Alert.alert("Bağlantı hatası",
                             "İnternet bağlantınızı kontrol edin."
                           );
+                          }
+                          
+                        })
+                        .catch(() => {
+                          return (Alert.alert("Bağlantı hatası",
+                            "İnternet bağlantınızı kontrol edin."
+                          ))
                         });
                     }}
                   >
@@ -306,58 +314,66 @@ export default class TransactionSheet extends Component {
                     style={styles.btnMesaiBaşla}
                     onPress={() => {
                       Network.getNetworkStateAsync()
-                        .then(() => {
-                          Alert.alert(
-                            "Uyarı !",
-                            "Bu işlemi yapmak istediğinizden emin misiniz?",
-                            [
-                              {
-                                text: "Evet",
-                                onPress: () => {
-                                  this.setState({ loadingStatus: 1 });
-                                  this._getLocation()
-                                    .then(() => {
-                                      if (this.state.locationStatus == 1) {
-                                        let latitude = this.state.latitude;
-                                        let longitude = this.state.longitude;
-                                        axios
-                                          .post(
-                                            `/event?event_type=${1}&latitude=${latitude}&longitude=${longitude}`
-                                          )
-                                          .then(() => {
-                                            this.setState({ lastEvent: 1 });
-                                            this.son10Kayit();
-                                            this.setState({ loadingStatus: 0 });
-                                          })
-                                          .catch(() => {
-                                            return Alert.alert(
-                                              "Uyarı !",
-                                              "İnternet bağlantınızı kontrol edin !",
-                                              this.setState({
-                                                loadingStatus: 0,
-                                              })
-                                            );
-                                          });
-                                      }
-                                    })
-                                    .catch(() => {
-                                      Alert.alert(
-                                        "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
-                                      );
-                                      this.setState({ loadingStatus: 0 });
-                                    });
+                        .then((e) => {
+                          if(e.isConnected === true){
+                            Alert.alert(
+                              "Uyarı !",
+                              "Bu işlemi yapmak istediğinizden emin misiniz?",
+                              [
+                                {
+                                  text: "Evet",
+                                  onPress: () => {
+                                    this.setState({ loadingStatus: 1 });
+                                    this._getLocation()
+                                      .then(() => {
+                                        if (this.state.locationStatus == 1) {
+                                          let latitude = this.state.latitude;
+                                          let longitude = this.state.longitude;
+                                          axios
+                                            .post(
+                                              `/event?event_type=${1}&latitude=${latitude}&longitude=${longitude}`
+                                            )
+                                            .then(() => {
+                                              this.setState({ lastEvent: 1 });
+                                              this.son10Kayit();
+                                              this.setState({ loadingStatus: 0 });
+                                            })
+                                            .catch(() => {
+                                              return Alert.alert(
+                                                "Uyarı !",
+                                                "İnternet bağlantınızı kontrol edin !",
+                                                this.setState({
+                                                  loadingStatus: 0,
+                                                })
+                                              );
+                                            });
+                                        }
+                                      })
+                                      .catch(() => {
+                                        Alert.alert(
+                                          "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
+                                        );
+                                        this.setState({ loadingStatus: 0 });
+                                      });
+                                  },
                                 },
-                              },
-                              {
-                                text: "Hayır",
-                              },
-                            ]
-                          );
-                        })
-                        .catch(() => {
-                          Alert.alert("Bağlantı hatası",
+                                {
+                                  text: "Hayır",
+                                },
+                              ]
+                            );
+                          }else{
+                            Alert.alert("Bağlantı hatası",
                             "İnternet bağlantınızı kontrol edin."
                           );
+                          }
+
+                          
+                        })
+                        .catch(() => {
+                          return(Alert.alert("Bağlantı hatası",
+                            "İnternet bağlantınızı kontrol edin."
+                          ))
                         });
                     }}
                   >
@@ -400,6 +416,7 @@ export default class TransactionSheet extends Component {
               <TouchableOpacity
                 style={styles.btnContainer}
                 onPress={() => {
+
                   Alert.alert(
                     "Uyarı !",
                     "Bu işlemi yapmak istediğinizden emin misiniz?",
