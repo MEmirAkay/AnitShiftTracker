@@ -16,6 +16,7 @@ import "react-native-reanimated";
 import { MotiView } from "moti";
 
 import * as Device from "expo-device";
+import storage from "../component/storage";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -28,25 +29,31 @@ export default class SigninRequest extends Component {
       deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
     };
   }
-  // _getLocation = async () => {
-  // let { status } = await Location.requestForegroundPermissionsAsync();
-  // if (status !== "granted") {
-  //   this.setState({ locationStatus: 0 });
-  //   Alert.alert(
-  //     "Uyarı",
-  //     "Konum bilgisi alınamadı.\nLüften konum hizmetini açın ve uygulamaya konumunuzu kullanması için izin verin !",
-  //     [
-  //       {
-  //         text: "Tamam",
-  //         onPress: () => {
-  //           status = Location.requestForegroundPermissionsAsync();
-  //         },
-  //       },
-  //     ]
-  //   );
-  // } else {
-  // }
-  // };
+
+  componentDidMount() {
+    try {
+      storage
+        .load({
+          key: "loginState",
+        })
+        .catch((e) => {
+          if (typeof e == "undefined"){
+            return
+          }
+        })
+        .then((e) => {
+          if (typeof e !== "undefined") {
+            axios.defaults.headers = {
+              login_token: e.login_token,
+              api_token: e.api_token,
+            };
+            this.state.navigation.replace("transactionSheet");
+          }
+        });
+    } catch (error) {
+      return
+    }
+  }
 
   Loading = () => {
     return (
@@ -76,7 +83,10 @@ export default class SigninRequest extends Component {
 
   verifyBtn() {
     axios
-      .post(`/user/signin-request?unique_code=${this.state.identity_number}`, null)
+      .post(
+        `/user/signin-request?unique_code=${this.state.identity_number}`,
+        null
+      )
       .then((res) => {
         res = res.data;
         if (!res.status) {
