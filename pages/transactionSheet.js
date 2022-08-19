@@ -24,6 +24,8 @@ export default class TransactionSheet extends Component {
     super(props);
 
     this.state = {
+      
+      loadingStatus:0,
       lastEvent: "",
       locationStatus: 0,
       latitude: undefined,
@@ -98,61 +100,56 @@ export default class TransactionSheet extends Component {
             repeat: Infinity,
           }}
         />
-        <Text style={styles.wait}>Lütfen Bekleyin</Text>
-        <Text style={styles.wait}>Konumunuz kontrol ediliyor...</Text>
+        <Text style={styles.wait}>Lütfen Bekleyin..</Text>
       </View>
     );
   };
 
   componentDidMount() {
-    this._getLocation();
-
-    this.kontrolMesai();
+        this.kontrolMesai();
   }
 
   _getLocation = async () => {
-    this.setState({ locationStatus: 0 });
     const { status } = await Location.requestForegroundPermissionsAsync();
-
+   
     if (status !== "granted") {
       Alert.alert(
         "Uyarı!",
-        "Konum verisi alınamadı.\nLütfen konum verinizi açın.",
+        "Konum verisi alınamadı.\nMesai değişimi yapılamaz.",
         [
           {
             text: "Tamam",
-            onPress: () => {
-              this.setState({ locationStatus: 0 });
-              this._getLocation();
-              
-            },
           },
         ]
       );
-
+      
       this.setState({ errorMessage: "Permission not granted!" });
       this.setState({ locationStatus: 0 });
+      this.setState({loadingStatus: 0});
     } else {
+      
       await Location.getCurrentPositionAsync()
         .then((e) => {
           e = e.coords;
           typeof e.latitude !== "undefined"
             ? (this.setState({ latitude: JSON.stringify(e.latitude) }),
-              this.setState({ longitude: JSON.stringify(e.longitude) }))
+              this.setState({ longitude: JSON.stringify(e.longitude) }),this.setState({ locationStatus: 1 }))
             : console.log("undefined");
-          this.setState({ locationStatus: 1 });
+            
+          
         })
         .catch(() => {
+          this.setState({ locationStatus: 0 })
           Alert.alert(
             "Uyarı !",
-            "Lütfen konum verinizin açık olduğundan emin olun.",
+            "Konum verisi alınamadı.\nMesai değişimi yapılamaz.",
             [
               {
                 text: "Tamam",
-                onPress: () => this._getLocation(),
               },
             ]
           );
+          this.setState({loadingStatus: 0})
         });
     }
   };
@@ -214,8 +211,7 @@ export default class TransactionSheet extends Component {
       <SafeAreaView style={styles.container}>
         <View>
           <StatusBar style="hidden" />
-          {typeof this.state.latitude !== "undefined" &&
-          this.state.locationStatus !== 0 ? (
+          {this.state.loadingStatus !== 1 ? (
             <View
               style={{
                 felx: 1,
@@ -239,21 +235,19 @@ export default class TransactionSheet extends Component {
                   <TouchableOpacity
                     style={styles.btnMesaiBitir}
                     onPress={() => {
-                      this._getLocation()
-                        .then(() => {
-                          if (this.state.locationStatus == 1) {
-                            Alert.alert(
-                              "Uyarı !",
-                              "Bu işlemi yapmak istediğinizden emin misiniz?",
-                              [
-                                {
-                                  text: "Hayır",
-                                },
-                                {
-                                  text: "Evet",
-                                  onPress: () => {
-                                    let latitude = this.state.latitude,
-                                      longitude = this.state.longitude;
+                      Alert.alert(
+                        "Uyarı !",
+                        "Bu işlemi yapmak istediğinizden emin misiniz?",
+                        [
+                          {
+                            text: "Evet",
+                            onPress: () => {
+                              this.setState({loadingStatus: 1});
+                              this._getLocation()
+                                .then(() => {
+                                  let latitude = this.state.latitude;
+                                  let longitude = this.state.longitude;
+                                  if (this.state.locationStatus == 1) {
                                     axios
                                       .post(
                                         `/event?event_type=${2}&latitude=${latitude}&longitude=${longitude}`
@@ -261,24 +255,30 @@ export default class TransactionSheet extends Component {
                                       .then(() => {
                                         this.setState({ lastEvent: 2 });
                                         this.son10Kayit();
+                                        this.setState({loadingStatus: 0});
                                       })
                                       .catch(() => {
                                         return Alert.alert(
                                           "Uyarı !",
-                                          "İnternet bağlantınızı kontrol edin !"
+                                          "İnternet bağlantınızı kontrol edin !",
+                                          this.setState({loadingStatus: 0})
                                         );
                                       });
-                                  },
-                                },
-                              ]
-                            );
-                          }
-                        })
-                        .catch(() => {
-                          Alert.alert(
-                            "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
-                          );
-                        });
+                                  }
+                                })
+                                .catch(() => {
+                                  Alert.alert(
+                                    "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
+                                  );
+                                  this.setState({loadingStatus: 0});
+                                });
+                            },
+                          },
+                          {
+                            text: "Hayır",
+                          },
+                        ]
+                      );
                     }}
                   >
                     <Text
@@ -297,21 +297,21 @@ export default class TransactionSheet extends Component {
                   <TouchableOpacity
                     style={styles.btnMesaiBaşla}
                     onPress={() => {
-                      this._getLocation()
-                        .then(() => {
-                          if (this.state.locationStatus == 1) {
-                            Alert.alert(
-                              "Uyarı !",
-                              "Bu işlemi yapmak istediğinizden emin misiniz?",
-                              [
-                                {
-                                  text: "Hayır",
-                                },
-                                {
-                                  text: "Evet",
-                                  onPress: () => {
-                                    let latitude = this.state.latitude,
-                                      longitude = this.state.longitude;
+                      
+                      Alert.alert(
+                        "Uyarı !",
+                        "Bu işlemi yapmak istediğinizden emin misiniz?",
+                        [
+                          {
+                            text: "Evet",
+                            onPress: () => {
+                              this.setState({loadingStatus: 1});
+                              this._getLocation()
+                                .then(() => {
+                                  
+                                  if (this.state.locationStatus == 1) {
+                                    let latitude = this.state.latitude;
+                                    let longitude = this.state.longitude;
                                     axios
                                       .post(
                                         `/event?event_type=${1}&latitude=${latitude}&longitude=${longitude}`
@@ -319,24 +319,31 @@ export default class TransactionSheet extends Component {
                                       .then(() => {
                                         this.setState({ lastEvent: 1 });
                                         this.son10Kayit();
+                                        this.setState({loadingStatus: 0});
                                       })
                                       .catch(() => {
                                         return Alert.alert(
                                           "Uyarı !",
-                                          "İnternet bağlantınızı kontrol edin !"
+                                          "İnternet bağlantınızı kontrol edin !",
+                                          this.setState({loadingStatus: 0})
                                         );
+                                        
                                       });
-                                  },
-                                },
-                              ]
-                            );
-                          }
-                        })
-                        .catch(() => {
-                          Alert.alert(
-                            "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
-                          );
-                        });
+                                  }
+                                })
+                                .catch(() => {
+                                  Alert.alert(
+                                    "İşlem başarısız\nKonum verisi alınamadı\nLütfen konum verinizi açın"
+                                  );
+                                  this.setState({loadingStatus: 0});
+                                });
+                            },
+                          },
+                          {
+                            text: "Hayır",
+                          },
+                        ]
+                      );
                     }}
                   >
                     <Text
