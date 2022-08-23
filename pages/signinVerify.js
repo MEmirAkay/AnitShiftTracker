@@ -34,7 +34,7 @@ export default class SignInVerify extends Component {
   }
   verifyBtn() {
     axios
-      .post(
+      .post( // Checks verify number and saves device info to database
         `/user/signin?identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`,
         null
       )
@@ -45,12 +45,12 @@ export default class SignInVerify extends Component {
           if (res.status == 0) {
             return (
               Alert.alert("Uyarı", res.message),
-              this.state.navigation.replace("signinRequest")
+              this.state.navigation.replace("signinRequest") // If verification failed routes "signinRequest"
             );
           }
           return Alert.alert("Uyarı", res.message);
         }
-        storage.save({
+        storage.save({ // If verification success gets tokens from API to store at localstorage
           key: "loginState",
           data: {
             api_token: res.user.api_token,
@@ -66,25 +66,26 @@ export default class SignInVerify extends Component {
   }
 
   componentDidMount() {
-    this.interval = setInterval(
+    this.interval = setInterval( // Starts time interval
       () => this.setState((prevState) => ({ timer: prevState.timer - 1 })),
       1000
     );
   }
 
   componentDidUpdate() {
+    // Updates time interval if not equal to "0"
     if (this.state.timer != 0) return;
 
-    clearInterval(this.interval);
+    clearInterval(this.interval);// When timer ended up clears interval
     Alert.alert(
       "Tekrar deneyiniz.",
       "Onay kodunu girmek için size ayrılan süre bitti."
     );
-    this.state.navigation.replace("signinRequest");
+    this.state.navigation.replace("signinRequest"); // When time's up routes "signinRequest"
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.interval); // When timer ended up clears interval
   }
 
   Loading = () => {
@@ -113,7 +114,7 @@ export default class SignInVerify extends Component {
     );
   };
 
-  calcTime(time) {
+  calcTime(time) { // Timer
     if (time < 1) return;
     let addZero = (t) => (t.toString().length == 1 ? `0` : "") + t;
     const h = Math.floor(time / 3600),
@@ -158,7 +159,7 @@ export default class SignInVerify extends Component {
               style={styles.btnContainer}
               disabled={this.state.verifyCode.length === 8 ? false : true}
               onPress={() => {
-                Network.getNetworkStateAsync()
+                Network.getNetworkStateAsync() // Checks network connection
                 .then((e) => {
                   if(e.isConnected === true ){
                 this.setState({ cntrl: true });

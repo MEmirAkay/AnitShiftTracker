@@ -366,9 +366,7 @@ export default class TransactionSheet extends Component {
                             Alert.alert("Bağlantı hatası",
                             "İnternet bağlantınızı kontrol edin."
                           );
-                          }
-
-                          
+                          }             
                         })
                         .catch(() => {
                           return(Alert.alert("Bağlantı hatası",
@@ -456,11 +454,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  image: {
-    marginBottom: 40,
-    width: 180,
-    height: 100,
-  },
   btnMesaiBaşla: {
     backgroundColor: "#5cb85c",
     color: "#fff",
@@ -503,9 +496,5 @@ const styles = StyleSheet.create({
     margin: 20,
     alignItems: "center",
     borderRadius: 15,
-  },
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.4,
   },
 });

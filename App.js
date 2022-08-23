@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SigninRequest from "./pages/signinRequest";
 import SigninVerify from "./pages/signinVerify";
 import transactionSheet from "./pages/transactionSheet";
+import LandingPage from "./pages/landingPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,16 @@ export default class App extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="signinRequest">
+        <Stack.Navigator initialRouteName="landingPage">
+          <Stack.Screen
+          name="landingPage"
+          component={LandingPage}
+          options={{
+            title: null,
+            header: () => null,
+            gestureEnabled: "false"
+          }}
+          />
           <Stack.Screen
             name="signinRequest"
             component={SigninRequest}

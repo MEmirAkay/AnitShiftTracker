@@ -14,11 +14,7 @@ import {
 import axios from "axios";
 import "react-native-reanimated";
 import { MotiView } from "moti";
-
-import * as Device from "expo-device";
 import * as Network from "expo-network";
-
-import storage from "../component/storage";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -28,36 +24,11 @@ export default class SigninRequest extends Component {
       identity_number: "",
       cntrl: false,
       navigation: props.navigation,
-      deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
     };
   }
 
-  componentDidMount() {
-    try {
-      storage
-        .load({
-          key: "loginState",
-        })
-        .catch((e) => {
-          if (typeof e == "undefined") {
-            return;
-          }
-        })
-        .then((e) => {
-          if (typeof e !== "undefined") {
-            axios.defaults.headers = {
-              login_token: e.login_token,
-              api_token: e.api_token,
-            };
-            this.state.navigation.replace("transactionSheet");
-          }
-        });
-    } catch (error) {
-      return;
-    }
-  }
-
   Loading = () => {
+    // Loading animation
     return (
       <View style={{ textAlign: "center", alignItems: "center" }}>
         <MotiView
@@ -86,20 +57,25 @@ export default class SigninRequest extends Component {
   verifyBtn() {
     axios
       .post(
+        // Checks users personnel number (Also this is a promise)
         `/user/signin-request?unique_code=${this.state.identity_number}`,
         null
       )
       .then((res) => {
+        // If we got response from API correctly (promise fulfill)
         res = res.data;
         if (!res.status) {
-          this.setState({ cntrl: false });
+          // If there is a problem about personel number (no match etc.)
+          this.setState({ cntrl: false }); // Stops loading screen
           return Alert.alert("Uyarı", res.message);
         }
 
+        // If there is no problem about personel number
         res.identity = this.state.identity_number;
         this.state.navigation.replace("signinVerify", res);
       })
       .catch((error) => {
+        // If promise rejected, there is network error or API error.
         console.log(error);
         return Alert.alert("Uyarı !", "İnternet bağlantınızı kontrol edin !");
       });
@@ -132,14 +108,14 @@ export default class SigninRequest extends Component {
             editable={!this.state.cntrl}
             onChangeText={(e) => this.setState({ identity_number: e })}
           />
-          {this.state.cntrl ? (
+          {this.state.cntrl ? ( // Controls loading screen
             <this.Loading />
           ) : (
             <TouchableOpacity
               disabled={this.state.identity_number < 5 ? true : false}
               style={styles.btnContainer}
               onPress={() => {
-                Network.getNetworkStateAsync()
+                Network.getNetworkStateAsync() // Checks network connection
                   .then((e) => {
                     if (e.isConnected === true) {
                       this.setState({ cntrl: true });
