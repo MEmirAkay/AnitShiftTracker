@@ -2,7 +2,7 @@
   "expo": {
     "name": "uCRM PDKS",
     "slug": "ucrm-pdks",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/u-crm-icon.png",
     "userInterfaceStyle": "automatic",
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.emirakay.uCRMPDKS",
-      "buildNumber":"6",
+      "buildNumber":"7",
       "infoPlist": {
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
         "NSLocationAlwaysUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
@@ -28,7 +28,7 @@
       }
     },
     "android": {
-      "versionCode":5,
+      "versionCode":8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/u-crm-adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
