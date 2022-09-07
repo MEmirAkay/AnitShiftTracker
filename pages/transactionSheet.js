@@ -125,21 +125,31 @@ export default class TransactionSheet extends Component {
               api_token: e.api_token,
               customer_number: e.customer_number,
             };
-            axios.post(`/user?device=${this.state.deviceInfo}`).then((e) => {
-
-              if(e.data.status == "1"){
-                return
-              }else{
-                Alert.alert("Oturumunuz sonlandırıldı.")
-              }
-            }).catch((err) => {
-              console.log(err);
-            });
+            axios
+              .post(`/user?device=${this.state.deviceInfo}`)
+              .then((e) => {
+                if (e.data.status == "1") {
+                  return;
+                } else {
+                  storage.remove({ key: "loginState" });
+                  Alert.alert("Uyarı", "Oturumunuz sonlandırıldı", [
+                    {
+                      text: "Tamam",
+                      onPress: () => {
+                        this.props.navigation.replace("welcomePage");
+                      },
+                    },
+                  ]);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
 
             this.kontrolMesai();
             return;
           } else {
-            this.state.navigation.replace("welcomePage"); // If tokens does not exist routes "signinRequest"
+            this.props.navigation.replace("welcomePage"); // If tokens does not exist routes "signinRequest"
           }
         });
     } catch (error) {
