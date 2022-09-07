@@ -19,7 +19,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ucrm.uCRMPDKS",
+      "bundleIdentifier": "com.anit.uCRMPDKS",
       "buildNumber":"2",
       "infoPlist": {
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
@@ -33,7 +33,7 @@
         "foregroundImage": "./assets/u-crm-adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.ucrm.uCRMPDKS"
+      "package": "com.anit.uCRMPDKS"
     },
     "web": {
       "favicon": "./assets/u-crm-favicon.png"
