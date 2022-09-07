@@ -10,12 +10,14 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  SafeAreaView
 } from "react-native";
 import axios from "axios";
 import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Network from "expo-network";
-import storage from "../component/storage";
+import { AntDesign } from "@expo/vector-icons";
+import { Dimensions } from "react-native";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -88,11 +90,36 @@ export default class SigninRequest extends Component {
   render() {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View
+        <SafeAreaView
           style={styles.container}
           onPress={Keyboard.dismiss}
           accessible={false}
         >
+          <View style={{alignItems:"flex-start", width:Dimensions.get("window").width, paddingBottom:30}}>
+          <TouchableOpacity
+            style={{
+              flexDirection:'row',
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              width: Dimensions.get("window").width / 4,
+              borderRadius: 10,
+              marginLeft:20,
+              padding: 10,
+              backgroundColor: "#dfe1e8",
+            }}
+            onPress={() => {
+              this.state.navigation.replace("welcomePage");
+            }}
+          >
+            <AntDesign name="back" size={25} color="black"/>
+            <Text style={{fontSize:20, marginLeft:5}}>
+              
+              Geri
+            </Text>
+          </TouchableOpacity>
+        </View>
+
           <Image
             style={{ resizeMode: "contain", width: 120, height: 120 }}
             source={require("../assets/u-crm.png")}
@@ -185,27 +212,10 @@ export default class SigninRequest extends Component {
                   Kod Al
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  this.state.navigation.replace("welcomePage");
-                }}
-                style={{
-                  backgroundColor: "#f59595",
-                  marginTop: 20,
-                  padding: 20,
-                  alignItems: "center",
-                  borderRadius: 15,
-                }}
-              >
-                <Text
-                  style={{ color: "#ef3b3b", fontWeight: "bold", fontSize: 20 }}
-                >
-                  Geri Dön
-                </Text>
-              </TouchableOpacity>
+              
             </>
           )}
-        </View>
+        </SafeAreaView>
       </TouchableWithoutFeedback>
     );
   }
@@ -216,7 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    
   },
 
   TextInput: {
