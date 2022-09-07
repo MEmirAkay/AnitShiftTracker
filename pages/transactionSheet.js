@@ -106,7 +106,8 @@ export default class TransactionSheet extends Component {
   };
 
   componentDidMount() {
-    try { // Checks storage to ensure tokens are there
+    try {
+      // Checks storage to ensure tokens are there
       storage
         .load({
           key: "loginState",
@@ -118,24 +119,32 @@ export default class TransactionSheet extends Component {
         })
         .then((e) => {
           if (typeof e !== "undefined") {
-            axios.defaults.headers = { // If tokens does exist sets them as headers
+            axios.defaults.headers = {
+              // If tokens does exist sets them as headers
               login_token: e.login_token,
               api_token: e.api_token,
-              customer_number: e.customer_number
+              customer_number: e.customer_number,
             };
-           
-           this.kontrolMesai();
-           return;
+            axios.post(`/user?device=${this.state.deviceInfo}`).then((e) => {
+
+              if(e.data.status == "1"){
+                return
+              }else{
+                Alert.alert("Oturumunuz sonlandırıldı.")
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
+
+            this.kontrolMesai();
+            return;
           } else {
-              this.state.navigation.replace("welcomePage")   // If tokens does not exist routes "signinRequest"
+            this.state.navigation.replace("welcomePage"); // If tokens does not exist routes "signinRequest"
           }
         });
     } catch (error) {
       return;
-    }   
-
-
-    
+    }
   }
 
   _getLocation = async () => {

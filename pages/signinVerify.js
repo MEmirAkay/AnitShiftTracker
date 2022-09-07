@@ -48,7 +48,7 @@ export default class SignInVerify extends Component {
           if (res.status == 0) {
             return (
               Alert.alert("Uyarı", res.message),
-              this.state.navigation.replace("signinRequest") // If verification failed routes "signinRequest"
+              this.state.navigation.replace("welcomePage") // If verification failed routes "signinRequest"
             );
           }
           return Alert.alert("Uyarı", res.message);
