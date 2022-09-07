@@ -15,8 +15,7 @@ import "react-native-reanimated";
 import { MotiView, SafeAreaView } from "moti";
 import axios from "axios";
 import * as Location from "expo-location";
-import * as Network from 'expo-network';
-
+import * as Network from "expo-network";
 
 export default class TransactionSheet extends Component {
   constructor(props) {
@@ -56,6 +55,7 @@ export default class TransactionSheet extends Component {
         axios.defaults.headers = {
           login_token: e.login_token,
           api_token: e.api_token,
+          customer_number: e.customer_number,
         };
         if (typeof e !== "undefined") {
           axios
@@ -102,8 +102,6 @@ export default class TransactionSheet extends Component {
       </View>
     );
   };
-
- 
 
   componentDidMount() {
     this.kontrolMesai();
@@ -176,7 +174,7 @@ export default class TransactionSheet extends Component {
                     fontSize: 15,
                   }}
                 >
-                  Mesai Başla
+                  GÜNE BAŞLA
                 </Text>
               ) : (
                 <Text
@@ -186,7 +184,7 @@ export default class TransactionSheet extends Component {
                     fontSize: 15,
                   }}
                 >
-                  Mesai Bitir
+                  GÜNÜ BİTİR
                 </Text>
               )}
 
@@ -235,11 +233,14 @@ export default class TransactionSheet extends Component {
                     onPress={() => {
                       Network.getNetworkStateAsync()
                         .then((e) => {
-                          if(e.isConnected === true){
+                          if (e.isConnected === true) {
                             Alert.alert(
                               "Uyarı !",
                               "Bu işlemi yapmak istediğinizden emin misiniz?",
                               [
+                                {
+                                  text: "Hayır",
+                                },
                                 {
                                   text: "Evet",
                                   onPress: () => {
@@ -256,7 +257,9 @@ export default class TransactionSheet extends Component {
                                             .then(() => {
                                               this.setState({ lastEvent: 2 });
                                               this.son10Kayit();
-                                              this.setState({ loadingStatus: 0 });
+                                              this.setState({
+                                                loadingStatus: 0,
+                                              });
                                             })
                                             .catch(() => {
                                               return Alert.alert(
@@ -277,23 +280,21 @@ export default class TransactionSheet extends Component {
                                       });
                                   },
                                 },
-                                {
-                                  text: "Hayır",
-                                },
                               ]
                             );
-                          }else{
+                          } else {
                             this.setState({ loadingStatus: 0 });
-                            Alert.alert("Bağlantı hatası",
-                            "İnternet bağlantınızı kontrol edin."
-                          );
+                            Alert.alert(
+                              "Bağlantı hatası",
+                              "İnternet bağlantınızı kontrol edin."
+                            );
                           }
-                          
                         })
                         .catch(() => {
-                          return (Alert.alert("Bağlantı hatası",
+                          return Alert.alert(
+                            "Bağlantı hatası",
                             "İnternet bağlantınızı kontrol edin."
-                          ))
+                          );
                         });
                     }}
                   >
@@ -302,9 +303,10 @@ export default class TransactionSheet extends Component {
                         color: "#fff",
                         textAlign: "center",
                         fontSize: 20,
+                        fontWeight: "900",
                       }}
                     >
-                      Mesai Bitir
+                      GÜNÜ BİTİR
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -315,11 +317,14 @@ export default class TransactionSheet extends Component {
                     onPress={() => {
                       Network.getNetworkStateAsync()
                         .then((e) => {
-                          if(e.isConnected === true){
+                          if (e.isConnected === true) {
                             Alert.alert(
                               "Uyarı !",
                               "Bu işlemi yapmak istediğinizden emin misiniz?",
                               [
+                                {
+                                  text: "Hayır",
+                                },
                                 {
                                   text: "Evet",
                                   onPress: () => {
@@ -336,7 +341,9 @@ export default class TransactionSheet extends Component {
                                             .then(() => {
                                               this.setState({ lastEvent: 1 });
                                               this.son10Kayit();
-                                              this.setState({ loadingStatus: 0 });
+                                              this.setState({
+                                                loadingStatus: 0,
+                                              });
                                             })
                                             .catch(() => {
                                               return Alert.alert(
@@ -357,21 +364,20 @@ export default class TransactionSheet extends Component {
                                       });
                                   },
                                 },
-                                {
-                                  text: "Hayır",
-                                },
                               ]
                             );
-                          }else{
-                            Alert.alert("Bağlantı hatası",
-                            "İnternet bağlantınızı kontrol edin."
-                          );
-                          }             
+                          } else {
+                            Alert.alert(
+                              "Bağlantı hatası",
+                              "İnternet bağlantınızı kontrol edin."
+                            );
+                          }
                         })
                         .catch(() => {
-                          return(Alert.alert("Bağlantı hatası",
+                          return Alert.alert(
+                            "Bağlantı hatası",
                             "İnternet bağlantınızı kontrol edin."
-                          ))
+                          );
                         });
                     }}
                   >
@@ -380,9 +386,10 @@ export default class TransactionSheet extends Component {
                         color: "#fff",
                         textAlign: "center",
                         fontSize: 20,
+                        fontWeight: "900",
                       }}
                     >
-                      Mesai Başla
+                      GÜNE BAŞLA
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -414,7 +421,6 @@ export default class TransactionSheet extends Component {
               <TouchableOpacity
                 style={styles.btnContainer}
                 onPress={() => {
-
                   Alert.alert(
                     "Uyarı !",
                     "Bu işlemi yapmak istediğinizden emin misiniz?",
@@ -426,7 +432,7 @@ export default class TransactionSheet extends Component {
                         text: "Evet",
                         onPress: () => {
                           storage.remove({ key: "loginState" });
-                          this.props.navigation.replace("signinRequest");
+                          this.props.navigation.replace("welcomePage");
                         },
                       },
                     ]

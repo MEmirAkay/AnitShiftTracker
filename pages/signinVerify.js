@@ -16,7 +16,7 @@ import storage from "../component/storage";
 import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Device from "expo-device";
-import * as Network from 'expo-network';
+import * as Network from "expo-network";
 
 export default class SignInVerify extends Component {
   constructor(props) {
@@ -30,13 +30,16 @@ export default class SignInVerify extends Component {
       deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
       identity: props.route.params.identity,
       timer: props.route.params.timeout,
+      customer_number:""
     };
   }
   verifyBtn() {
     axios
-      .post( // Checks verify number and saves device info to database
+      .post(
+        // Checks verify number and saves device info to database
         `/user/signin?identity_number=${this.state.identity}&verify_code=${this.state.verifyCode}&device=${this.state.deviceInfo}`,
-        null
+        {},
+        { headers: { "customer_number": this.state.customer_number } }
       )
       .then((res) => {
         res = res.data;
@@ -50,12 +53,14 @@ export default class SignInVerify extends Component {
           }
           return Alert.alert("Uyarı", res.message);
         }
-        storage.save({ // If verification success gets tokens from API to store at localstorage
+        storage.save({
+          // If verification success gets tokens from API to store at localstorage
           key: "loginState",
           data: {
             api_token: res.user.api_token,
             login_token: res.user.login_token,
             name_surname: res.user.name_surname,
+            customer_number: this.state.customer_number
           },
         });
         this.state.navigation.replace("transactionSheet", res);
@@ -66,17 +71,22 @@ export default class SignInVerify extends Component {
   }
 
   componentDidMount() {
-    this.interval = setInterval( // Starts time interval
+    this.interval = setInterval(
+      // Starts time interval
       () => this.setState((prevState) => ({ timer: prevState.timer - 1 })),
       1000
     );
+
+    this.setState({customer_number: this.props.route.params.user_number});
+    
+    
   }
 
   componentDidUpdate() {
     // Updates time interval if not equal to "0"
     if (this.state.timer != 0) return;
 
-    clearInterval(this.interval);// When timer ended up clears interval
+    clearInterval(this.interval); // When timer ended up clears interval
     Alert.alert(
       "Tekrar deneyiniz.",
       "Onay kodunu girmek için size ayrılan süre bitti."
@@ -114,7 +124,8 @@ export default class SignInVerify extends Component {
     );
   };
 
-  calcTime(time) { // Timer
+  calcTime(time) {
+    // Timer
     if (time < 1) return;
     let addZero = (t) => (t.toString().length == 1 ? `0` : "") + t;
     const h = Math.floor(time / 3600),
@@ -156,22 +167,41 @@ export default class SignInVerify extends Component {
             <this.Loading />
           ) : (
             <TouchableOpacity
-              style={styles.btnContainer}
+              style={{
+                backgroundColor:this.state.verifyCode.length === 8 ? "#a6c9ff" : "#c9c9c9",
+                width: "90%",
+                padding: 20,
+                marginVertical: 20,
+                alignItems: "center",
+                borderRadius: 15,
+              }}
               disabled={this.state.verifyCode.length === 8 ? false : true}
               onPress={() => {
                 Network.getNetworkStateAsync() // Checks network connection
-                .then((e) => {
-                  if(e.isConnected === true ){
-                this.setState({ cntrl: true });
-                this.verifyBtn();}else{
-                  Alert.alert("Bağlantı Hatası","İnternet bağlantınızı kontrol edin")
-                }
-                }).catch(()=>{
-                  return Alert.alert("Bağlantı Hatası")
-                })
+                  .then((e) => {
+                    if (e.isConnected === true) {
+                      this.setState({ cntrl: true });
+                      this.verifyBtn();
+                    } else {
+                      Alert.alert(
+                        "Bağlantı Hatası",
+                        "İnternet bağlantınızı kontrol edin"
+                      );
+                    }
+                  })
+                  .catch(() => {
+                    return Alert.alert("Bağlantı Hatası");
+                  });
               }}
             >
-              <Text style={styles.btnText}>Giriş Yap</Text>
+              <Text style={{
+                    color:
+                    this.state.verifyCode.length === 8
+                        ? "#3b82ef" : "#777777" ,
+                         
+                    fontWeight: "bold",
+                    fontSize: 20,
+                  }}>Giriş Yap</Text>
             </TouchableOpacity>
           )}
         </View>

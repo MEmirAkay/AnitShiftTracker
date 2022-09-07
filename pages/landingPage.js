@@ -31,10 +31,11 @@ export default class LandingPage extends Component {
               axios.defaults.headers = { // If tokens does exist sets them as headers
                 login_token: e.login_token,
                 api_token: e.api_token,
+                customer_number: e.customer_number
               };
               this.state.navigation.replace("transactionSheet"); // If tokens does exist routes "transactionSheet"
             } else {
-                this.state.navigation.replace("signinRequest")   // If tokens does not exist routes "signinRequest"
+                this.state.navigation.replace("welcomePage")   // If tokens does not exist routes "signinRequest"
             }
           });
       } catch (error) {

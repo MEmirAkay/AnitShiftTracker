@@ -8,6 +8,8 @@ import SigninRequest from "./pages/signinRequest";
 import SigninVerify from "./pages/signinVerify";
 import transactionSheet from "./pages/transactionSheet";
 import LandingPage from "./pages/landingPage";
+import WelcomePage from "./pages/welcomePage";
+import WvSigninPage from "./pages/wvsinginPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +23,28 @@ export default class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="landingPage">
-          <Stack.Screen
+          
+        <Stack.Screen
           name="landingPage"
           component={LandingPage}
+          options={{
+            title: null,
+            header: () => null,
+            gestureEnabled: "false"
+          }}
+          />
+          <Stack.Screen
+          name="wvsigninPage"
+          component={WvSigninPage}
+          options={{
+            title: null,
+            header: () => null,
+            gestureEnabled: "false"
+          }}
+          />
+        <Stack.Screen
+          name="welcomePage"
+          component={WelcomePage}
           options={{
             title: null,
             header: () => null,

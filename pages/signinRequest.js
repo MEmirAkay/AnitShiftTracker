@@ -15,6 +15,7 @@ import axios from "axios";
 import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Network from "expo-network";
+import storage from "../component/storage";
 
 export default class SigninRequest extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class SigninRequest extends Component {
 
     this.state = {
       identity_number: "",
+      user_number: "",
       cntrl: false,
       navigation: props.navigation,
     };
@@ -59,7 +61,8 @@ export default class SigninRequest extends Component {
       .post(
         // Checks users personnel number (Also this is a promise)
         `/user/signin-request?unique_code=${this.state.identity_number}`,
-        null
+        {},
+        { headers: { customer_number: this.state.user_number } }
       )
       .then((res) => {
         // If we got response from API correctly (promise fulfill)
@@ -72,6 +75,7 @@ export default class SigninRequest extends Component {
 
         // If there is no problem about personel number
         res.identity = this.state.identity_number;
+        res.user_number = this.state.user_number;
         this.state.navigation.replace("signinVerify", res);
       })
       .catch((error) => {
@@ -101,6 +105,25 @@ export default class SigninRequest extends Component {
           </Text>
           <TextInput
             style={styles.TextInput}
+            maxLength={6}
+            keyboardType="number-pad"
+            placeholder="Üye Numarası"
+            placeholderTextColor="#aaaaaa"
+            editable={!this.state.cntrl}
+            onChangeText={(e) => this.setState({ user_number: e })}
+          />
+          <TextInput
+            style={{
+              backgroundColor: "#ffffff",
+              width: "90%",
+              borderStyle: "solid",
+              borderWidth: 2,
+              borderColor: "#ddd",
+              borderRadius: 15,
+              padding: 15,
+              fontSize: 20,
+              marginBottom: 20,
+            }}
             maxLength={5}
             keyboardType="number-pad"
             placeholder="Personel Numaranızı Giriniz"
@@ -111,29 +134,76 @@ export default class SigninRequest extends Component {
           {this.state.cntrl ? ( // Controls loading screen
             <this.Loading />
           ) : (
-            <TouchableOpacity
-              disabled={this.state.identity_number < 5 ? true : false}
-              style={styles.btnContainer}
-              onPress={() => {
-                Network.getNetworkStateAsync() // Checks network connection
-                  .then((e) => {
-                    if (e.isConnected === true) {
-                      this.setState({ cntrl: true });
-                      this.verifyBtn();
-                    } else {
-                      Alert.alert(
-                        "Bağlantı Hatası",
-                        "İnternet bağlantınızı kontrol edin"
-                      );
-                    }
-                  })
-                  .catch(() => {
-                    return Alert.alert("Bağlantı Hatası");
-                  });
-              }}
-            >
-              <Text style={styles.btnText}>Kod Al</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                disabled={
+                  this.state.identity_number.length < 5 ||
+                  this.state.user_number.length < 6
+                    ? true
+                    : false
+                }
+                style={{
+                  backgroundColor:
+                    this.state.identity_number.length < 5 ||
+                    this.state.user_number.length < 6
+                      ? "#c9c9c9"
+                      : "#a6c9ff",
+                  width: "90%",
+                  padding: 20,
+                  alignItems: "center",
+                  borderRadius: 15,
+                }}
+                onPress={() => {
+                  Network.getNetworkStateAsync() // Checks network connection
+                    .then((e) => {
+                      if (e.isConnected === true) {
+                        this.setState({ cntrl: true });
+                        this.verifyBtn();
+                      } else {
+                        Alert.alert(
+                          "Bağlantı Hatası",
+                          "İnternet bağlantınızı kontrol edin"
+                        );
+                      }
+                    })
+                    .catch(() => {
+                      return Alert.alert("Bağlantı Hatası");
+                    });
+                }}
+              >
+                <Text
+                  style={{
+                    color:
+                      this.state.identity_number.length < 5 ||
+                      this.state.user_number.length < 6
+                        ? "#777777" : "#3b82ef",
+                         
+                    fontWeight: "bold",
+                    fontSize: 20,
+                  }}
+                >
+                  Kod Al
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.state.navigation.replace("welcomePage");
+                }}
+                style={{
+                  backgroundColor: "#f59595",
+                  marginTop: 20,
+                  padding: 20,
+                  alignItems: "center",
+                  borderRadius: 15,
+                }}
+              >
+                <Text
+                  style={{ color: "#ef3b3b", fontWeight: "bold", fontSize: 20 }}
+                >
+                  Geri Dön
+                </Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
       </TouchableWithoutFeedback>
@@ -171,18 +241,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  btnContainer: {
-    backgroundColor: "#a6c9ff",
-    width: "90%",
-    padding: 20,
-    alignItems: "center",
-    borderRadius: 15,
-  },
-  btnText: {
-    color: "#3b82ef",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
   wait: {
     color: "black",
     fontWeight: "bold",
