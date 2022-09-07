@@ -95,7 +95,7 @@ export default class SigninRequest extends Component {
           onPress={Keyboard.dismiss}
           accessible={false}
         >
-          <View style={{alignItems:"flex-start", width:Dimensions.get("window").width, paddingBottom:30}}>
+          <View style={{alignItems:"flex-start", width:Dimensions.get("window").width, paddingBottom:30, paddingTop:25}}>
           <TouchableOpacity
             style={{
               flexDirection:'row',

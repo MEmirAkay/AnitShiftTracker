@@ -16,6 +16,7 @@ import { MotiView, SafeAreaView } from "moti";
 import axios from "axios";
 import * as Location from "expo-location";
 import * as Network from "expo-network";
+import * as Device from "expo-device";
 
 export default class TransactionSheet extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ export default class TransactionSheet extends Component {
       identity_number: null,
       identity_number_verify: false,
       username: "Kullanici",
+      deviceInfo: Device.brand + "-" + Device.modelId + "-" + Device.deviceName,
     };
   }
 
@@ -104,7 +106,36 @@ export default class TransactionSheet extends Component {
   };
 
   componentDidMount() {
-    this.kontrolMesai();
+    try { // Checks storage to ensure tokens are there
+      storage
+        .load({
+          key: "loginState",
+        })
+        .catch((e) => {
+          if (typeof e == "undefined") {
+            return;
+          }
+        })
+        .then((e) => {
+          if (typeof e !== "undefined") {
+            axios.defaults.headers = { // If tokens does exist sets them as headers
+              login_token: e.login_token,
+              api_token: e.api_token,
+              customer_number: e.customer_number
+            };
+           
+           this.kontrolMesai();
+           return;
+          } else {
+              this.state.navigation.replace("welcomePage")   // If tokens does not exist routes "signinRequest"
+          }
+        });
+    } catch (error) {
+      return;
+    }   
+
+
+    
   }
 
   _getLocation = async () => {
