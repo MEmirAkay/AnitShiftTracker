@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 
   registerBtn: {
     flex: 1,
-    elevation: 5,
+   
     alignItems: "center",
     justifyContent: "center",
     width: Dimensions.get("window").width / 2,
