@@ -41,8 +41,8 @@ export default class SigninRequest extends Component {
             height: 40,
             borderRadius: 150 / 2,
             borderWidth: 150 / 20,
-            borderColor: "#a6c9ff",
-            shadowColor: "#a6c9ff",
+            borderColor: "#99f0c6",
+            shadowColor: "#99f0c6",
             marginBottom: 10,
           }}
           from={{ opacity: 0 }}
@@ -174,7 +174,7 @@ export default class SigninRequest extends Component {
                     this.state.identity_number.length < 5 ||
                     this.state.user_number.length < 6
                       ? "#c9c9c9"
-                      : "#a6c9ff",
+                      : "#99f0c6",
                   width: "90%",
                   padding: 20,
                   alignItems: "center",
@@ -203,7 +203,7 @@ export default class SigninRequest extends Component {
                     color:
                       this.state.identity_number.length < 5 ||
                       this.state.user_number.length < 6
-                        ? "#777777" : "#3b82ef",
+                        ? "#777777" : "#1cb86d",
                          
                     fontWeight: "bold",
                     fontSize: 20,

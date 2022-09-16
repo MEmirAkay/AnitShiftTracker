@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
   Alert,
 } from "react-native";
 import storage from "../component/storage";
@@ -17,6 +18,7 @@ import "react-native-reanimated";
 import { MotiView } from "moti";
 import * as Device from "expo-device";
 import * as Network from "expo-network";
+import { AntDesign } from "@expo/vector-icons";
 
 export default class SignInVerify extends Component {
   constructor(props) {
@@ -107,8 +109,8 @@ export default class SignInVerify extends Component {
             height: 40,
             borderRadius: 150 / 2,
             borderWidth: 150 / 20,
-            borderColor: "#a6c9ff",
-            shadowColor: "#a6c9ff",
+            borderColor: "#99f0c6",
+            shadowColor: "#99f0c6",
             marginTop: 15,
           }}
           from={{ opacity: 0 }}
@@ -138,6 +140,30 @@ export default class SignInVerify extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
+        <View style={{alignItems:"flex-start", width:Dimensions.get("window").width, paddingBottom:30, paddingTop:25}}>
+          <TouchableOpacity
+            style={{
+              flexDirection:'row',
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              width: Dimensions.get("window").width / 4,
+              borderRadius: 10,
+              marginLeft:20,
+              padding: 10,
+              backgroundColor: "#dfe1e8",
+            }}
+            onPress={() => {
+              this.state.navigation.replace("welcomePage");
+            }}
+          >
+            <AntDesign name="back" size={25} color="black"/>
+            <Text style={{fontSize:20, marginLeft:5}}>
+              
+              Geri
+            </Text>
+          </TouchableOpacity>
+        </View>
           <Image
             style={{ resizeMode: "contain", width: 120, height: 120 }}
             source={require("../assets/u-crm.png")}
@@ -168,7 +194,7 @@ export default class SignInVerify extends Component {
           ) : (
             <TouchableOpacity
               style={{
-                backgroundColor:this.state.verifyCode.length === 8 ? "#a6c9ff" : "#c9c9c9",
+                backgroundColor:this.state.verifyCode.length === 8 ? "#99f0c6" : "#c9c9c9",
                 width: "90%",
                 padding: 20,
                 marginVertical: 20,
@@ -197,7 +223,7 @@ export default class SignInVerify extends Component {
               <Text style={{
                     color:
                     this.state.verifyCode.length === 8
-                        ? "#3b82ef" : "#777777" ,
+                        ? "#1cb86d" : "#777777" ,
                          
                     fontWeight: "bold",
                     fontSize: 20,

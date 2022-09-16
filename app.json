@@ -19,8 +19,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anit.uCRMPDKS",
-      "buildNumber":"2",
+      "bundleIdentifier": "com.anit.mikroCRMPDKS",
+      "buildNumber": "2",
       "infoPlist": {
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
         "NSLocationAlwaysUsageDescription": "Uygulama personalin mesai giriş ve çıkışlarını hangi lokasyondan yaptığı bilgisini sağlamalıdır",
@@ -28,15 +28,20 @@
       }
     },
     "android": {
-      "versionCode":2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/u-crm-adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.anit.uCRMPDKS"
+      "package": "com.anit.mikroCRMPDKS"
     },
     "web": {
       "favicon": "./assets/u-crm-favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "23a65cf0-1207-48f7-84a0-4ddb04f7690d"
+      }
     }
   }
 }

@@ -17,6 +17,7 @@ import axios from "axios";
 import * as Location from "expo-location";
 import * as Network from "expo-network";
 import * as Device from "expo-device";
+import { Ionicons } from '@expo/vector-icons'; 
 
 export default class TransactionSheet extends Component {
   constructor(props) {
@@ -88,8 +89,8 @@ export default class TransactionSheet extends Component {
             height: 40,
             borderRadius: 150 / 2,
             borderWidth: 150 / 20,
-            borderColor: "#a6c9ff",
-            shadowColor: "#a6c9ff",
+            borderColor: "#99f0c6",
+            shadowColor: "#99f0c6",
             marginTop: 15,
           }}
           from={{ opacity: 0 }}
@@ -265,13 +266,43 @@ export default class TransactionSheet extends Component {
                 alignContent: "center",
               }}
             >
+              <View style={{width: Dimensions.get("window").width * 0.8, alignItems:"center"}}>
+                <TouchableOpacity
+                  style={styles.btnContainer}
+                  onPress={() => {
+                    Alert.alert(
+                      "Uyarı !",
+                      "Bu işlemi yapmak istediğinizden emin misiniz?",
+                      [
+                        {
+                          text: "Hayır",
+                        },
+                        {
+                          text: "Evet",
+                          onPress: () => {
+                            storage.remove({ key: "loginState" });
+                            this.props.navigation.replace("welcomePage");
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  
+                ><View>
+                  <Ionicons name="exit-outline" size={34} color="white" />
+                </View>
+                <View>
+                  <Text style={styles.btnText}>Oturumu Sonlandır</Text>
+                </View>
+                </TouchableOpacity>
+              </View>
               <View style={{ alignItems: "center", marginTop: 60 }}>
                 <Image
                   style={{ resizeMode: "contain", width: 120, height: 120 }}
                   source={require("../assets/u-crm.png")}
                 />
 
-                <Text style={{ fontSize: 20, paddingTop: 20 }}>
+                <Text style={{ fontSize: 35,marginVertical:30 ,fontWeight:"300"}}>
                   {this.state.username}
                 </Text>
               </View>
@@ -468,29 +499,7 @@ export default class TransactionSheet extends Component {
                 />
               </View>
 
-              <TouchableOpacity
-                style={styles.btnContainer}
-                onPress={() => {
-                  Alert.alert(
-                    "Uyarı !",
-                    "Bu işlemi yapmak istediğinizden emin misiniz?",
-                    [
-                      {
-                        text: "Hayır",
-                      },
-                      {
-                        text: "Evet",
-                        onPress: () => {
-                          storage.remove({ key: "loginState" });
-                          this.props.navigation.replace("welcomePage");
-                        },
-                      },
-                    ]
-                  );
-                }}
-              >
-                <Text style={styles.btnText}>Oturumu Sonlandır</Text>
-              </TouchableOpacity>
+              
             </View>
           ) : (
             <this.Loading />
@@ -511,7 +520,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   btnMesaiBaşla: {
-    backgroundColor: "#5cb85c",
+    backgroundColor: "#88db88",
     color: "#fff",
     marginTop: 20,
     padding: 20,
@@ -523,7 +532,7 @@ const styles = StyleSheet.create({
   },
   btnMesaiBitir: {
     width: Dimensions.get("window").width * 0.8,
-    backgroundColor: "#d9534f",
+    backgroundColor: "#ed6b78",
     color: "#fff",
     marginTop: 20,
     padding: 20,
@@ -546,10 +555,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   btnContainer: {
-    width: Dimensions.get("window").width * 0.8,
-    backgroundColor: "#a6c9ff",
-    padding: 10,
-    margin: 20,
+    flexDirection:"row",
+    justifyContent:"space-evenly",
+    width: Dimensions.get("window").width * 0.6,
+    backgroundColor: "#c5cddb",
+    padding: 5,
+    margin: 5,
     alignItems: "center",
     borderRadius: 15,
   },
